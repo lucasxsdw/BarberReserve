@@ -1,8 +1,7 @@
+import 'package:barber_reserve/screens/login_screen.dart';
 import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'screens/register_screen.dart'; // ajuste o nome conforme o arquivo real
-
-void main() {
+import 'screens/login_screen.dart'; void main() {
   runApp(const MyApp());
 }
 
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RegisterScreen(), // 👈 muda de LoginScreen() para RegisterScreen()
+      home: LoginScreen(), 
     );
   }
 }

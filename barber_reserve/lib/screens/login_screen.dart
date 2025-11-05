@@ -1,3 +1,4 @@
+import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -114,7 +115,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                             Expanded(
                               child: GestureDetector(
-                                onTap: () => setState(() => isRegister = true),
+                                onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                                    );
+                                  },
+
+                             
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
@@ -133,6 +141,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 ),
                               ),
                             ),
+                            
                           ],
                         ),
                       ),
