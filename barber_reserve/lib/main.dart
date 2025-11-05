@@ -1,29 +1,19 @@
+import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'screens/login_screen.dart';
-import 'screens/root_screen.dart';
+import 'screens/register_screen.dart'; // ajuste o nome conforme o arquivo real
 
 void main() {
-  runApp(const BarberReserveApp());
+  runApp(const MyApp());
 }
 
-class BarberReserveApp extends StatelessWidget {
-  const BarberReserveApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Barber Reserve',
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        textTheme: GoogleFonts.interTextTheme(),
-      ),
-      home: const RootScreen(),
-      routes: {
-        '/login': (_) => const LoginScreen(),
-      },
+      home: RegisterScreen(), // 👈 muda de LoginScreen() para RegisterScreen()
     );
   }
 }

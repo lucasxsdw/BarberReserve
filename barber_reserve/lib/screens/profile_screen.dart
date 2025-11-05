@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+//import '../services/api_service.dart';
 import '../models/appointment_model.dart';
 
 class PerfilScreen extends StatefulWidget {
@@ -10,7 +10,7 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  final api = ApiService();
+  //final api = ApiService();
   List<AppointmentModel> history = [];
 
   @override
@@ -20,8 +20,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Future<void> _load() async {
-    final list = await api.fetchAppointments();
-    setState(() => history = list);
+    //final list = await api.fetchAppointments();
+   // setState(() => history = list);
   }
 
   @override

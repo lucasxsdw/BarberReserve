@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  final VoidCallback? onLogin;
-  const LoginScreen({super.key, this.onLogin});
+class RegisterScreen extends StatefulWidget {
+  final VoidCallback? onRegister;
+  const RegisterScreen({super.key, this.onRegister});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
-  bool isRegister = false;
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _name = TextEditingController();
   final _email = TextEditingController();
+  final _phone = TextEditingController();
   final _password = TextEditingController();
+  final _confirmPassword = TextEditingController();
 
   @override
   void dispose() {
+    _name.dispose();
     _email.dispose();
+    _phone.dispose();
     _password.dispose();
+    _confirmPassword.dispose();
     super.dispose();
   }
 
@@ -92,38 +97,18 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           children: [
                             Expanded(
                               child: GestureDetector(
-                                onTap: () => setState(() => isRegister = false),
+                                onTap: () {
+                                  Navigator.pop(context); // volta para tela de login
+                                },
                                 child: Container(
-                                  margin: const EdgeInsets.only(left: 6), // margem à esquerda
-                                  padding: const EdgeInsets.symmetric(vertical: 4), // altura menor
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: !isRegister ? Colors.white : Colors.transparent,
+                                    color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   alignment: Alignment.center,
                                   child: const Text(
                                     'Entrar',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => isRegister = true),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: isRegister ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Cadastrar',
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
@@ -133,10 +118,59 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 ),
                               ),
                             ),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 6), // margem à esquerda
+                                padding: const EdgeInsets.symmetric(vertical: 4), // altura menor
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Cadastrar',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
+
+                      // Nome completo
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Nome completo',
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: _name,
+                        decoration: InputDecoration(
+                          hintText: 'Seu nome',
+                          filled: true,
+                          fillColor: const Color(0xFFD9D9D9),
+                          prefixIcon: const Icon(Icons.person_outline, color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Email
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -162,7 +196,37 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+
+                      // Telefone
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Telefone',
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: _phone,
+                        decoration: InputDecoration(
+                          hintText: 'seu@email.com',
+                          filled: true,
+                          fillColor: const Color(0xFFD9D9D9),
+                          prefixIcon: const Icon(Icons.phone_outlined, color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Senha
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -189,7 +253,38 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+
+                      // Confirmar Senha
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Confirmar senha',
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: _confirmPassword,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: '********',
+                          filled: true,
+                          fillColor: const Color(0xFFD9D9D9),
+                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 24),
+
+                      // Botão Entrar (Gradiente)
                       Container(
                         width: double.infinity,
                         height: 48,
@@ -209,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: () => widget.onLogin?.call(),
+                          onPressed: () => widget.onRegister?.call(),
                           child: const Text(
                             'Entrar',
                             style: TextStyle(
