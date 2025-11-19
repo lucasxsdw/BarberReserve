@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:barber_reserve/services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
-  final VoidCallback? onRegister;
-  const RegisterScreen({super.key, this.onRegister});
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -15,6 +15,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _password = TextEditingController();
   final _confirmPassword = TextEditingController();
 
+  bool isLoading = false;
+
+  final ApiService api = ApiService();
+
   @override
   void dispose() {
     _name.dispose();
@@ -25,9 +29,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // ========================================================
+  // FUNÇÃO DE REGISTRO
+  // ========================================================
+  Future<void> _doRegister() async {
+    final name = _name.text.trim();
+    final email = _email.text.trim();
+    final phone = _phone.text.trim();
+    final password = _password.text.trim();
+    final confirm = _confirmPassword.text.trim();
+
+    if (name.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty || confirm.isEmpty) {
+      _showMessage("Preencha todos os campos.");
+      return;
+    }
+
+    if (password != confirm) {
+      _showMessage("As senhas não coincidem.");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final response = await api.register(name, email, password, phone);
+
+      if (response["id"] != null) {
+        _showMessage("Conta criada com sucesso!");
+        Navigator.pop(context);
+      } else {
+        _showMessage("Erro ao criar conta: ${response.toString()}");
+      }
+    } catch (e) {
+      _showMessage("Erro ao conectar ao servidor.");
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
+  }
+
+  // ========================================================
+  // UI
+  // ========================================================
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
       body: SafeArea(
@@ -35,7 +87,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 24),
                 Column(
@@ -58,6 +109,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
+
+                // CARD
                 Container(
                   width: w * 0.95,
                   padding: const EdgeInsets.all(20),
@@ -73,257 +126,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                        'Bem-vindo!',
+                        'Criar conta',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Entre na sua conta ou crie uma nova',
-                        style: TextStyle(fontSize: 14, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD9D9D9),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context); // volta para tela de login
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Entrar',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 6), // margem à esquerda
-                                padding: const EdgeInsets.symmetric(vertical: 4), // altura menor
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                alignment: Alignment.center,
-                                child: const Text(
-                                  'Cadastrar',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+
                       const SizedBox(height: 24),
 
-                      // Nome completo
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Nome completo',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _name,
-                        decoration: InputDecoration(
-                          hintText: 'Seu nome',
-                          filled: true,
-                          fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.person_outline, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+                      _label("Nome completo"),
+                      _inputField(controller: _name, icon: Icons.person_outline),
+
                       const SizedBox(height: 12),
 
-                      // Email
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'E-mail',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _email,
-                        decoration: InputDecoration(
-                          hintText: 'seu@email.com',
-                          filled: true,
-                          fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+                      _label("E-mail"),
+                      _inputField(controller: _email, icon: Icons.email_outlined),
+
                       const SizedBox(height: 12),
 
-                      // Telefone
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Telefone',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _phone,
-                        decoration: InputDecoration(
-                          hintText: 'seu@email.com',
-                          filled: true,
-                          fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.phone_outlined, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+                      _label("Telefone"),
+                      _inputField(controller: _phone, icon: Icons.phone_outlined),
+
                       const SizedBox(height: 12),
 
-                      // Senha
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Senha',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _password,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '********',
-                          filled: true,
-                          fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+                      _label("Senha"),
+                      _inputField(controller: _password, icon: Icons.lock_outline, isPassword: true),
+
                       const SizedBox(height: 12),
 
-                      // Confirmar Senha
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Confirmar senha',
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _confirmPassword,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: '********',
-                          filled: true,
-                          fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+                      _label("Confirmar senha"),
+                      _inputField(controller: _confirmPassword, icon: Icons.lock_outline, isPassword: true),
+
                       const SizedBox(height: 24),
 
-                      // Botão Entrar (Gradiente)
-                      Container(
+                      // BOTÃO
+                      SizedBox(
                         width: double.infinity,
                         height: 48,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF00B4DB), Color(0xFF7B61FF)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            backgroundColor: const Color(0xFF7B61FF),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          onPressed: () => widget.onRegister?.call(),
-                          child: const Text(
-                            'Entrar',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Esqueci minha senha',
-                          style: TextStyle(
-                            color: Color(0xFF7B61FF),
-                            fontSize: 14,
-                          ),
+                          onPressed: isLoading ? null : _doRegister,
+                          child: isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'Cadastrar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
@@ -332,6 +189,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // ========================================================
+  // Widgets auxiliares
+  // ========================================================
+  Widget _label(String text) => Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+
+  Widget _inputField({
+    required TextEditingController controller,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: const Color(0xFFD9D9D9),
+        prefixIcon: Icon(icon, color: Colors.grey),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );

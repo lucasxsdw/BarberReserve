@@ -1,4 +1,5 @@
 import 'package:barber_reserve/screens/register_screen.dart';
+import 'package:barber_reserve/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,9 +11,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
-  bool isRegister = false;
+  bool isLoading = false;
+
   final _email = TextEditingController();
   final _password = TextEditingController();
+
+  final api = ApiService();
 
   @override
   void dispose() {
@@ -21,9 +25,51 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     super.dispose();
   }
 
+  // ==========================================
+  // FUNÇÃO DE LOGIN
+  // ==========================================
+  Future<void> _doLogin() async {
+  final email = _email.text.trim();
+  final password = _password.text.trim();
+
+  if (email.isEmpty || password.isEmpty) {
+    _showMessage("Preencha todos os campos.");
+    return;
+  }
+
+  setState(() => isLoading = true);
+
+  try {
+    final response = await api.login(email, password);
+
+    final body = response["body"];
+
+    if (response["statusCode"] == 200 && body["access"] != null) {
+      _showMessage("Login realizado com sucesso!");
+      widget.onLogin?.call(); // Vai para Home
+    } else {
+      _showMessage(body["detail"] ?? "Credenciais inválidas.");
+    }
+  } catch (e) {
+    _showMessage("Erro ao conectar ao servidor.");
+  }
+
+  setState(() => isLoading = false);
+}
+
+  // ==========================================
+  // SNACKBAR
+  // ==========================================
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
       body: SafeArea(
@@ -31,9 +77,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 24),
+
+                // LOGO
                 Column(
                   children: const [
                     Icon(Icons.content_cut, size: 64, color: Color(0xFF7B61FF)),
@@ -48,12 +95,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 8),
                 const Text(
                   'Sua barbearia na palma da mão',
                   style: TextStyle(color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
+
                 Container(
                   width: w * 0.95,
                   padding: const EdgeInsets.all(20),
@@ -68,8 +117,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       ),
                     ],
                   ),
+
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
                         'Bem-vindo!',
@@ -84,6 +133,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         style: TextStyle(fontSize: 14, color: Colors.black87),
                       ),
                       const SizedBox(height: 16),
+
+                      // BOTÕES ENTRAR / CADASTRAR
                       Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFD9D9D9),
@@ -92,41 +143,37 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         child: Row(
                           children: [
                             Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => isRegister = false),
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 6), // margem à esquerda
-                                  padding: const EdgeInsets.symmetric(vertical: 4), // altura menor
-                                  decoration: BoxDecoration(
-                                    color: !isRegister ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Entrar',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 6),
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Entrar',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),
                             ),
+
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                                    );
-                                  },
-
-                             
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                                  );
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: isRegister ? Colors.white : Colors.transparent,
+                                    color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   alignment: Alignment.center,
@@ -141,11 +188,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 ),
                               ),
                             ),
-                            
                           ],
                         ),
                       ),
+
                       const SizedBox(height: 24),
+
+                      // EMAIL FIELD
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -171,7 +220,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 16),
+
+                      // SENHA FIELD
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -198,7 +250,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 24),
+
+                      // BOTÃO LOGIN
                       Container(
                         width: double.infinity,
                         height: 48,
@@ -218,18 +273,22 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: () => widget.onLogin?.call(),
-                          child: const Text(
-                            'Entrar',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
+                          onPressed: isLoading ? null : _doLogin,
+                          child: isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'Entrar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
+
                       const SizedBox(height: 12),
+
                       TextButton(
                         onPressed: () {},
                         child: const Text(
