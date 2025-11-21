@@ -1,6 +1,7 @@
 import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:barber_reserve/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:barber_reserve/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback? onLogin;
@@ -41,12 +42,17 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
   try {
     final response = await api.login(email, password);
+    
 
     final body = response["body"];
 
     if (response["statusCode"] == 200 && body["access"] != null) {
       _showMessage("Login realizado com sucesso!");
-      widget.onLogin?.call(); // Vai para Home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const  TelaInicial()),
+);
+ // Vai para Home
     } else {
       _showMessage(body["detail"] ?? "Credenciais inválidas.");
     }
@@ -130,67 +136,73 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       const SizedBox(height: 4),
                       const Text(
                         'Entre na sua conta ou crie uma nova',
-                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                        style: TextStyle(fontSize: 12, color: Colors.black87),
                       ),
                       const SizedBox(height: 16),
 
                       // BOTÕES ENTRAR / CADASTRAR
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD9D9D9),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.only(left: 6),
-                                padding: const EdgeInsets.symmetric(vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                alignment: Alignment.center,
-                                child: const Text(
-                                  'Entrar',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ),
+                  
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD9D9D9),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Row(
+                    children: [
+                      // BOTÃO ENTRAR
+                      Expanded(
+                        child: GestureDetector(
+          
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 6),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
                               ),
                             ),
-
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Cadastrar',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
+
+                      // BOTÃO CADASTRAR
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Cadastrar',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                       const SizedBox(height: 24),
 
@@ -289,16 +301,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
                       const SizedBox(height: 12),
 
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Esqueci minha senha',
-                          style: TextStyle(
-                            color: Color(0xFF7B61FF),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ),

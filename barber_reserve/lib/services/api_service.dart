@@ -54,14 +54,14 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
   return await ApiService.post("login", {
-    "username": email,
+    "email": email,
     "password": password,
   });
 }
 
 Future<Map<String, dynamic>> register(String name, String email, String password, String phone) async {
   return await ApiService.post("register", {
-    "username": name,
+    "full_name": name,
     "email": email,
     "password": password,
   });

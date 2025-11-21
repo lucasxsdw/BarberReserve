@@ -9,14 +9,14 @@ class AuthService {
   // REGISTER
   // ================================
   static Future<Map<String, dynamic>> register({
-    required String username,
+    required String fullName,
     required String email,
     required String password,
   }) async {
     final res = await ApiService.post(
       "register",
       {
-        "username": username,
+        "full_name": fullName,
         "email": email,
         "password": password,
       },
@@ -29,13 +29,13 @@ class AuthService {
   // LOGIN
   // ================================
   static Future<Map<String, dynamic>> login({
-    required String username,
+    required String email,
     required String password,
   }) async {
     final res = await ApiService.post(
       "login",
       {
-        "username": username,
+        "email": email,
         "password": password,
       },
     );

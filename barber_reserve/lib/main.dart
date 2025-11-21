@@ -1,6 +1,7 @@
 import 'package:barber_reserve/screens/login_screen.dart';
 import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:barber_reserve/screens/services_screen.dart';
+import 'package:barber_reserve/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/services_screen.dart'; void main() {
   runApp(const MyApp());
