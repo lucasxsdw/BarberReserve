@@ -8,22 +8,25 @@ class AuthService {
   // ================================
   // REGISTER
   // ================================
-  static Future<Map<String, dynamic>> register({
-    required String fullName,
-    required String email,
-    required String password,
-  }) async {
-    final res = await ApiService.post(
-      "register",
-      {
-        "full_name": fullName,
-        "email": email,
-        "password": password,
-      },
-    );
+static Future<Map<String, dynamic>> register({
+  required String fullName,
+  required String email,
+  required String password,
+  required String phone,
+}) async {
+  final res = await ApiService.post(
+    "register",
+    {
+      "full_name": fullName,
+      "email": email,
+      "password": password,
+      "telefone": phone,  // 👈 bate com o serializer
+    },
+  );
 
-    return res;
-  }
+  return res;
+}
+
 
   // ================================
   // LOGIN
@@ -81,4 +84,22 @@ class AuthService {
       "Authorization": "Bearer $token",
     };
   }
+  // ================================
+  // PERFIL DO USUÁRIO LOGADO
+  // ================================
+  static Future<Map<String, dynamic>> getProfile() async {
+    final token = await getToken();
+
+    if (token == null) {
+      return {
+        "statusCode": 401,
+        "body": {"detail": "Usuário não autenticado"}
+      };
+    }
+
+    // Usa o método que criamos na ApiService
+    return await ApiService.getUserProfile(token);
+  }
 }
+
+ 

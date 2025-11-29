@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:barber_reserve/services/auth_service.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
+
+  @override
+  State<PerfilScreen> createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  late Future<Map<String, dynamic>> _profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = AuthService.getProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,196 +33,226 @@ class PerfilScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Topo com gradiente e perfil
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    backgroundImage: AssetImage('assets/images/profile.jpg'),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _profileFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData) {
+            return const Center(child: Text('Erro ao carregar perfil'));
+          }
+
+          final data = snapshot.data!;
+          final body = data["body"] ?? {};
+          final String nome = body["nome"] ?? "Usuário";
+          final String email = body["email"] ?? "";
+          final String telefone = body["telefone"] ?? "(sem telefone)";
+
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Topo com gradiente e perfil
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'João Cliente',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage('assets/images/profile.jpg'),
                       ),
-                      Text(
-                        'joao@email.com',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                      const SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            nome,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            email,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
+                ),
+                const SizedBox(height: 16),
 
-            // Estatísticas
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _infoCard('1', 'Serviços realizados'),
-                _infoCard('R\$ 25', 'Total gasto'),
+                // Estatísticas (ainda fixas por enquanto)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _infoCard('1', 'Serviços realizados'),
+                    _infoCard('R\$ 25', 'Total gasto'),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Informações pessoais
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline, color: Colors.black54),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Informações Pessoais',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 0,
+                              ),
+                              side: const BorderSide(color: Colors.black54),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () {},
+                            icon: const Icon(Icons.edit_outlined, size: 16),
+                            label: const Text(
+                              'Editar',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      const Row(
+                        children: [
+                          Icon(Icons.email_outlined,
+                              color: Colors.black54, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'E-mail',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 28, top: 4),
+                        child: Text(email),
+                      ),
+                      const SizedBox(height: 12),
+                     const Row(
+                        children: [
+                          Icon(Icons.phone_outlined, color: Colors.black54, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Telefone',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 28, top: 4),
+                        child: Text(telefone),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Histórico de agendamentos (mock por enquanto)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.history, color: Colors.black54),
+                          SizedBox(width: 8),
+                          Text(
+                            'Histórico de agendamentos',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _agendamentoItem(
+                        nomeServico: 'Sobrancelha',
+                        preco: 'R\$ 15',
+                        data: '20/12/2024 às 14:00',
+                        profissional: 'Ana Silva',
+                        avatar: null,
+                      ),
+                      const SizedBox(height: 8),
+                      _agendamentoItem(
+                        nomeServico: 'Corte feminino',
+                        preco: 'R\$ 25',
+                        data: '20/12/2024 às 14:00',
+                        profissional: 'Carlos Santos',
+                        avatar: 'assets/images/barber.jpg',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Sair da conta
+                TextButton.icon(
+                  onPressed: () async {
+                    await AuthService.logout();
+                    // aqui você pode navegar de volta pra tela de login se quiser
+                    // Navigator.pushReplacement(...);
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.red),
+                  label: const Text(
+                    'Sair da conta',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // Informações pessoais
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.person_outline, color: Colors.black54),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Informações Pessoais',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                          side: const BorderSide(color: Colors.black54),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: () {},
-                        icon: const Icon(Icons.edit_outlined, size: 16),
-                        label: const Text(
-                          'Editar',
-                          style: TextStyle(fontSize: 14, color: Colors.black87),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Row(
-                    children: [
-                      Icon(Icons.email_outlined, color: Colors.black54, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        'E-mail',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 28, top: 4),
-                    child: Text('joao@email.com'),
-                  ),
-                  const SizedBox(height: 12),
-                  const Row(
-                    children: [
-                      Icon(Icons.phone_outlined, color: Colors.black54, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        'Telefone',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 28, top: 4),
-                    child: Text('(11) 99999-9999'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Histórico de agendamentos
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.history, color: Colors.black54),
-                      SizedBox(width: 8),
-                      Text(
-                        'Histórico de agendamentos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _agendamentoItem(
-                    nomeServico: 'Sobrancelha',
-                    preco: 'R\$ 15',
-                    data: '20/12/2024 às 14:00',
-                    profissional: 'Ana Silva',
-                    avatar: null,
-                  ),
-                  const SizedBox(height: 8),
-                  _agendamentoItem(
-                    nomeServico: 'Corte feminino',
-                    preco: 'R\$ 25',
-                    data: '20/12/2024 às 14:00',
-                    profissional: 'Carlos Santos',
-                    avatar: 'assets/images/barber.jpg',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Sair da conta
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text(
-                'Sair da conta',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

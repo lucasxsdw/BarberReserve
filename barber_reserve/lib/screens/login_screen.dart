@@ -2,6 +2,8 @@ import 'package:barber_reserve/screens/register_screen.dart';
 import 'package:barber_reserve/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/screens/home_screen.dart';
+import 'package:barber_reserve/services/auth_service.dart';
+
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback? onLogin;
@@ -41,7 +43,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   setState(() => isLoading = true);
 
   try {
-    final response = await api.login(email, password);
+    final response = await AuthService.login(
+      email: email,
+      password: password,
+    );
     
 
     final body = response["body"];
