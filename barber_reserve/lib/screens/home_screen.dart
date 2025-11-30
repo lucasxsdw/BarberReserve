@@ -13,7 +13,7 @@ class _TelaInicialState extends State<TelaInicial> {
   int _index = 0;
   final pages = [
     const AgendaTab(),
-    const ServicosScreen(),
+    const ServicesScreen(),
     const PerfilScreen(),
   ];
 

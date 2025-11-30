@@ -5,9 +5,6 @@ class AuthService {
   static const _storage = FlutterSecureStorage();
   static const _tokenKey = "access_token";
 
-  // ================================
-  // REGISTER
-  // ================================
 static Future<Map<String, dynamic>> register({
   required String fullName,
   required String email,
@@ -15,12 +12,12 @@ static Future<Map<String, dynamic>> register({
   required String phone,
 }) async {
   final res = await ApiService.post(
-    "register",
+    "usuario/register",
     {
       "full_name": fullName,
       "email": email,
       "password": password,
-      "telefone": phone,  // 👈 bate com o serializer
+      "telefone": phone, 
     },
   );
 
@@ -28,15 +25,12 @@ static Future<Map<String, dynamic>> register({
 }
 
 
-  // ================================
-  // LOGIN
-  // ================================
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
     final res = await ApiService.post(
-      "login",
+      "usuario/login",
       {
         "email": email,
         "password": password,
@@ -55,23 +49,17 @@ static Future<Map<String, dynamic>> register({
     return res;
   }
 
-  // ================================
-  // GET TOKEN
-  // ================================
+
   static Future<String?> getToken() async {
     return await _storage.read(key: _tokenKey);
   }
 
-  // ================================
-  // LOGOUT
-  // ================================
+ 
   static Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
   }
 
-  // ================================
-  // AUTH HEADERS
-  // ================================
+  
   static Future<Map<String, String>> authHeaders() async {
     final token = await getToken();
 
@@ -84,9 +72,7 @@ static Future<Map<String, dynamic>> register({
       "Authorization": "Bearer $token",
     };
   }
-  // ================================
-  // PERFIL DO USUÁRIO LOGADO
-  // ================================
+  
   static Future<Map<String, dynamic>> getProfile() async {
     final token = await getToken();
 
@@ -97,7 +83,6 @@ static Future<Map<String, dynamic>> register({
       };
     }
 
-    // Usa o método que criamos na ApiService
     return await ApiService.getUserProfile(token);
   }
 }

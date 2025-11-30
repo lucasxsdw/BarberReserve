@@ -85,7 +85,7 @@ class ApiService {
   // LOGIN
   Future<Map<String, dynamic>> login(String email, String password) async {
     return await ApiService.post(
-      "login",
+      "usuario/login",
       {
         "email": email,
         "password": password,
@@ -101,7 +101,7 @@ class ApiService {
     String phone,
   ) async {
     return await ApiService.post(
-      "register",
+      "usuario/register",
       {
         "full_name": name,
         "email": email,
@@ -115,7 +115,7 @@ class ApiService {
   // PERFIL DO USUÁRIO LOGADO
   static Future<Map<String, dynamic>> getUserProfile(String token) async {
     return await ApiService.get(
-      "usuario-perfil",
+      "usuario/usuario-perfil",
       token: token,
     );
   }

@@ -1,15 +1,25 @@
-class AppointmentModel {
-  final int id;
-  final String serviceTitle;
-  final DateTime dateTime;
-  final double price;
+import 'service_model.dart';
+import 'professional_model.dart';
 
-  AppointmentModel({required this.id, required this.serviceTitle, required this.dateTime, required this.price});
+class Appointment {
+  final ServiceModel servico;
+  final Professional profissional;
+  final DateTime data;
+  final String horario;
 
-  factory AppointmentModel.fromJson(Map<String, dynamic> json) => AppointmentModel(
-        id: json['id'] as int,
-        serviceTitle: json['serviceTitle'] as String,
-        dateTime: DateTime.parse(json['dateTime'] as String),
-        price: (json['price'] as num).toDouble(),
-      );
+  Appointment({
+    required this.servico,
+    required this.profissional,
+    required this.data,
+    required this.horario,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'servico_id': servico.id,
+      'profissional_id': profissional.id,
+      'data': data.toIso8601String(),
+      'horario': horario,
+    };
+  }
 }
