@@ -119,4 +119,45 @@ class ApiService {
       token: token,
     );
   }
+
+  // parte do usuario/profissional
+  static Future<Map<String, dynamic>> patch(
+  String endpoint,
+  Map<String, dynamic> data, {
+  String? token,
+}) async {
+  final uri = Uri.parse("$baseUrl/$endpoint/");
+
+  try {
+    final headers = {
+      "Content-Type": "application/json",
+      if (token != null) "Authorization": "Bearer $token",
+    };
+
+    final response = await http.patch(
+      uri,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    dynamic body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {
+      body = {"raw": response.body};
+    }
+
+    return {
+      "statusCode": response.statusCode,
+      "body": body,
+    };
+  } catch (e) {
+    print("Erro em ApiService.patch($endpoint): $e");
+    return {
+      "statusCode": 500,
+      "body": {"error": "Erro ao conectar com servidor"}
+    };
+  }
 }
+}
+
