@@ -1,5 +1,5 @@
-import 'package:barber_reserve/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:barber_reserve/screens/professionals_register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +10,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(), 
+      home: ProfessionalsRegisterScreen(
+        salaoId: 1,         // VALOR FICTÍCIO PARA TESTE
+        salaoNome: "Barbearia Teste",
+      ),
     );
   }
 }

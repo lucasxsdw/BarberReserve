@@ -14,134 +14,160 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   bool _loading = false;
 
   Future<void> _selectRole(String role) async {
-  if (_loading) return;
-  setState(() => _loading = true);
+    if (_loading) return;
+    setState(() => _loading = true);
 
-  try {
-    // Atualiza tipo_perfil no backend (CLIENTE ou SALAO)
-    final user = await UserService.updateTipoPerfil(role);
+    try {
+      // Atualiza tipo_perfil no backend (CLIENTE ou SALAO)
+      final user = await UserService.updateTipoPerfil(role);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (user == null) {
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao atualizar tipo de perfil.')),
+        );
+        return;
+      }
+
+      if (role == 'CLIENTE') {
+        // 👉 CLIENTE -> vai pra tela de serviços
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ServicesScreen(),
+          ),
+        );
+      } else {
+        // 👉 SALAO -> vai pra tela de cadastro de salão, passando o USER
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SalonRegisterScreen(user: user),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao atualizar tipo de perfil.')),
+        SnackBar(content: Text('Erro ao selecionar perfil: $e')),
       );
-      return;
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
-
-    if (role == 'CLIENTE') {
-      // 👉 CLIENTE -> vai pra tela de serviços (quando você fizer)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const ServicesScreen(),
-        ),
-      );
-    } else {
-      // 👉 SALAO -> vai pra tela de cadastro de salão, passando o USER
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SalonRegisterScreen(user: user),
-        ),
-      );
-    }
-  } catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erro ao selecionar perfil: $e')),
-    );
-  } finally {
-    if (mounted) setState(() => _loading = false);
   }
-}
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: const Color(0xFFF1F1F1),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            const SizedBox(height: 48),
-            Text(
-              'Quem é você?',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Escolha como quer usar o app',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  _RoleButton(
-                    label: 'CLIENTE',
-                    onTap: _loading ? null : () => _selectRole('CLIENTE'),
+                  const Icon(
+                    Icons.content_cut,
+                    color: Color(0xFF5A3DB8),
+                    size: 70,
                   ),
-                  const SizedBox(height: 16),
-                  _RoleButton(
-                    label: 'PROFISSIONAL / SALÃO',
-                    onTap: _loading ? null : () => _selectRole('SALAO'),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "DegraDart",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF5A3DB8),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    "Sua barbearia na palma da mão",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    "Quem é você?",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildGradientButton(
+                          text: "CLIENTE",
+                          enabled: !_loading,
+                          onTap: () => _selectRole('CLIENTE'),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildGradientButton(
+                          text: "PROFISSIONAL/ SALÃO",
+                          enabled: !_loading,
+                          onTap: () => _selectRole('SALAO'),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            if (_loading) const CircularProgressIndicator(),
+            if (_loading)
+              Container(
+                color: Colors.black.withOpacity(0.1),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
-}
 
-class _RoleButton extends StatelessWidget {
-  final String label;
-  final VoidCallback? onTap;
-
-  const _RoleButton({
-    required this.label,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final disabled = onTap == null;
-
+  Widget _buildGradientButton({
+    required String text,
+    required VoidCallback onTap,
+    required bool enabled,
+  }) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        height: 65,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          gradient: disabled
-              ? null
-              : const LinearGradient(
+          borderRadius: BorderRadius.circular(12),
+          gradient: enabled
+              ? const LinearGradient(
                   colors: [
-                    Color(0xFF4C6FFF),
-                    Color(0xFF7F5CFF),
+                    Color(0xFF1FB6FF),
+                    Color(0xFF5A3DB8),
                   ],
-                ),
-          color: disabled ? Colors.grey[400] : null,
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : null,
+          color: enabled ? null : Colors.grey[400],
         ),
         child: Center(
           child: Text(
-            label,
+            text,
             style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
             ),
           ),
         ),
