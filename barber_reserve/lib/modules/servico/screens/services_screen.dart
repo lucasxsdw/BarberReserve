@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/service_model.dart';
-import '../models/professional_model.dart';
-import '../models/appointment_model.dart';
+import '../../profissional/models/professional_model.dart';
+import '../../agendamento/models/appointment_model.dart';
 import '../services/service_service.dart';
+import '../../agendamento/services/appointment_service.dart';
 
 class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
@@ -12,9 +13,7 @@ class ServicesScreen extends StatefulWidget {
 }
 
 class _ServicesScreenState extends State<ServicesScreen> {
-  final ServiceService api = ServiceService();
   late Future<List<ServiceModel>> futureServicos;
-
 
   ServiceModel? servicoSelecionado;
   Professional? profissionalSelecionado;
@@ -24,16 +23,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   void initState() {
     super.initState();
-    futureServicos = api.getServicos();
+    // usa método estático do service
+    futureServicos = ServiceService.getServicos();
   }
-
 
   Widget gradientButton({
     required String text,
     required VoidCallback? onPressed,
     double radius = 12,
-    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
-        horizontal: 16, vertical: 14),
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
   }) {
     final enabled = onPressed != null;
     return Opacity(
@@ -59,7 +58,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
             child: Text(
               text,
               style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -67,20 +68,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 
-
   void abrirModalAgendar(ServiceModel servico) {
     servicoSelecionado = servico;
-    profissionalSelecionado ??= servico.profissionais.isNotEmpty
-        ? servico.profissionais.first
-        : null;
+    profissionalSelecionado ??=
+        servico.profissionais.isNotEmpty ? servico.profissionais.first : null;
 
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
         return Dialog(
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           backgroundColor: Colors.transparent,
           child: StatefulBuilder(
             builder: (context, setStateModal) {
@@ -93,7 +91,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     Row(
                       children: [
                         Expanded(
@@ -106,13 +103,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         IconButton(
                           onPressed: () => Navigator.pop(context),
                           icon: const Icon(Icons.close),
-                        )
+                        ),
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
-
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
@@ -122,7 +116,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       ),
                       child: Row(
                         children: [
-
                           Container(
                             width: 48,
                             height: 48,
@@ -130,47 +123,58 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(Icons.content_cut,
-                                color: Color(0xFF2EA7FF)),
+                            child: const Icon(
+                              Icons.content_cut,
+                              color: Color(0xFF2EA7FF),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(servico.titulo,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600)),
-                                Text(servico.descricao,
-                                    style: const TextStyle(fontSize: 12)),
+                                Text(
+                                  servico.titulo,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  servico.descricao ?? '',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
                               ],
                             ),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text('${servico.duracaoMinutos}min',
-                                  style: const TextStyle(fontSize: 12)),
+                              Text(
+                                '${servico.duracaoMinutos}min',
+                                style: const TextStyle(fontSize: 12),
+                              ),
                               const SizedBox(height: 6),
-                              Text('R\$ ${servico.preco.toStringAsFixed(2)}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600)),
+                              Text(
+                                'R\$ ${servico.preco.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
-
                     DropdownButtonFormField<Professional>(
                       value: profissionalSelecionado,
                       items: servico.profissionais
-                          .map((p) => DropdownMenuItem(
-                                value: p,
-                                child: Text(p.nome),
-                              ))
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p,
+                              child: Text(p.nome),
+                            ),
+                          )
                           .toList(),
                       onChanged: (p) {
                         setStateModal(() => profissionalSelecionado = p);
@@ -182,10 +186,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
-
                     gradientButton(
                       text: 'Escolher Data e Horário',
                       onPressed: () {
@@ -203,7 +204,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 
-
   void abrirCalendario() {
     DateTime hoje = DateTime.now();
     DateTime selecionada = dataSelecionada ?? hoje;
@@ -216,17 +216,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
         return StatefulBuilder(
           builder: (context, setStateModal) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(20.0)),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20.0),
+                ),
               ),
               child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     Container(
                       width: 48,
                       height: 6,
@@ -236,9 +237,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text('Escolha a Data',
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const Text(
+                      'Escolha a Data',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                     const SizedBox(height: 12),
                     SizedBox(
                       height: 360,
@@ -273,10 +276,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
   void abrirHorarios() {
     final horarios = [
-      "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00",
+      "08:00",
+      "08:30",
+      "09:00",
+      "09:30",
+      "10:00",
+      "10:30",
+      "11:00",
+      "11:30",
+      "12:00",
     ];
 
-    horarioSelecionado = null; 
+    horarioSelecionado = null;
 
     showModalBottomSheet(
       context: context,
@@ -286,11 +297,13 @@ class _ServicesScreenState extends State<ServicesScreen> {
         return StatefulBuilder(
           builder: (context, setStateModal) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(20.0)),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20.0),
+                ),
               ),
               child: SafeArea(
                 child: Column(
@@ -305,12 +318,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text('Escolha seu horário',
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const Text(
+                      'Escolha seu horário',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                     const SizedBox(height: 12),
-
-
                     SizedBox(
                       height: 300,
                       child: ListView.separated(
@@ -336,10 +349,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                         : Colors.grey.shade50),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                    color: selected
-                                        ? const Color(0xFF2EA7FF)
-                                        : Colors.transparent,
-                                    width: selected ? 1.4 : 0),
+                                  color: selected
+                                      ? const Color(0xFF2EA7FF)
+                                      : Colors.transparent,
+                                  width: selected ? 1.4 : 0,
+                                ),
                               ),
                               child: Row(
                                 children: [
@@ -347,14 +361,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     child: Text(
                                       h,
                                       style: TextStyle(
-                                          fontWeight: selected
-                                              ? FontWeight.bold
-                                              : FontWeight.w500),
+                                        fontWeight: selected
+                                            ? FontWeight.bold
+                                            : FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                   if (selected)
-                                    const Icon(Icons.check_circle,
-                                        color: Color(0xFF2EA7FF)),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Color(0xFF2EA7FF),
+                                    ),
                                 ],
                               ),
                             ),
@@ -362,7 +379,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 12),
                     gradientButton(
                       text: 'Escolher Horário',
@@ -384,14 +400,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 
-
   Future<void> confirmarAgendamento() async {
     if (servicoSelecionado == null ||
         profissionalSelecionado == null ||
         dataSelecionada == null ||
         horarioSelecionado == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Preencha todos os dados antes de confirmar')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os dados antes de confirmar'),
+        ),
+      );
       return;
     }
 
@@ -402,23 +420,27 @@ class _ServicesScreenState extends State<ServicesScreen> {
       horario: horarioSelecionado!,
     );
 
-    final loading = showDialog(
+    showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
-    final success = await api.enviarAgendamento(ag);
-
+    // precisa existir em ServiceService:
+    // static Future<bool> enviarAgendamento(Appointment ag)
+    final success = await AppointmentService.enviarAgendamento(ag);
 
     if (mounted) Navigator.pop(context);
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(success
-          ? 'Agendamento realizado com sucesso!'
-          : 'Erro ao enviar agendamento.'),
-    ));
-
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'Agendamento realizado com sucesso!'
+              : 'Erro ao enviar agendamento.',
+        ),
+      ),
+    );
 
     if (success) {
       setState(() {
@@ -430,13 +452,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
+          // HEADER
           Container(
             height: 160,
             width: double.infinity,
@@ -453,24 +474,26 @@ class _ServicesScreenState extends State<ServicesScreen> {
             padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Serviços',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 6),
-                      Text('Escolha um serviço perfeito para você',
-                          style: TextStyle(color: Colors.white70)),
+                      Text(
+                        'Escolha um serviço perfeito para você',
+                        style: TextStyle(color: Colors.white70),
+                      ),
                     ],
                   ),
                 ),
-
                 Container(
                   width: 64,
                   height: 64,
@@ -483,7 +506,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
             ),
           ),
 
-
+          // LISTA
           Expanded(
             child: FutureBuilder<List<ServiceModel>>(
               future: futureServicos,
@@ -502,11 +525,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              futureServicos = api.getServicos();
+                              futureServicos = ServiceService.getServicos();
                             });
                           },
                           child: const Text('Tentar novamente'),
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -514,9 +537,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
                 final servicos = snapshot.data ?? [];
 
+                if (servicos.isEmpty) {
+                  return const Center(
+                    child: Text('Nenhum serviço cadastrado.'),
+                  );
+                }
+
                 return ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
                   itemCount: servicos.length,
                   itemBuilder: (context, index) {
                     final s = servicos[index];
@@ -527,9 +558,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 6)),
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 6),
+                          ),
                         ],
                       ),
                       child: Padding(
@@ -539,7 +571,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
                           children: [
                             Row(
                               children: [
-
                                 Container(
                                   width: 44,
                                   height: 44,
@@ -547,8 +578,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     color: const Color(0xFFE8F4FF),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(Icons.content_cut,
-                                      color: Color(0xFF2EA7FF)),
+                                  child: const Icon(
+                                    Icons.content_cut,
+                                    color: Color(0xFF2EA7FF),
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -556,37 +589,50 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(s.titulo,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      Text(
+                                        s.titulo,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                                       const SizedBox(height: 4),
-                                      Text(s.descricao,
-                                          style: const TextStyle(
-                                              color: Colors.black54)),
+                                      Text(
+                                        s.descricao ?? '',
+                                        style: const TextStyle(
+                                          color: Colors.black54,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text('R\$ ${s.preco.toStringAsFixed(2)}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      'R\$ ${s.preco.toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     const SizedBox(height: 6),
-                                    Text('${s.duracaoMinutos} min',
-                                        style: const TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12)),
+                                    Text(
+                                      '${s.duracaoMinutos} min',
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                             const SizedBox(height: 12),
                             Text(
-                                'Profissionais disponíveis: ${s.profissionais.map((p) => p.nome).join(', ')}',
-                                style:
-                                    const TextStyle(color: Colors.black54)),
+                              'Profissionais disponíveis: '
+                              '${s.profissionais.map((p) => p.nome).join(', ')}',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
                             const SizedBox(height: 12),
                             Row(
                               children: [
@@ -599,22 +645,25 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                         gradient: const LinearGradient(
                                           colors: [
                                             Color(0xFF2EA7FF),
-                                            Color(0xFF6E40F7)
+                                            Color(0xFF6E40F7),
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: const Center(
-                                          child: Text('Agendar Serviço',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold))),
+                                        child: Text(
+                                          'Agendar Serviço',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),

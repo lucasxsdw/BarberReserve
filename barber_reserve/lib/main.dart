@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/screens/professionals_register.dart';
+// import 'package:barber_reserve/screens/professionals_register.dart';
+//import 'package:barber_reserve/screens/services_screen.dart';
+//import 'package:barber_reserve/screens/service_register.dart';
+import 'package:barber_reserve/modules/auth/screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProfessionalsRegisterScreen(
-        salaoId: 1,         // VALOR FICTÍCIO PARA TESTE
-        salaoNome: "Barbearia Teste",
+      home: LoginScreen(// apenas isso é necessário
       ),
     );
   }

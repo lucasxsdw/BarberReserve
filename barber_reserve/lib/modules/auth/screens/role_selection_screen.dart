@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/services/user_service.dart';
-import 'package:barber_reserve/screens/salon_register_screen.dart';
-import 'package:barber_reserve/screens/services_screen.dart';
+import 'package:barber_reserve/modules/usuario/services/user_service.dart';
+import 'package:barber_reserve/modules/salao/screens/salon_register_screen.dart';
+import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});

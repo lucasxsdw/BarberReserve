@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/services/auth_service.dart';
+import 'package:barber_reserve/core/auth/auth_service.dart';
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});

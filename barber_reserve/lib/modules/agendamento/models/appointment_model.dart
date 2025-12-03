@@ -1,5 +1,5 @@
-import 'service_model.dart';
-import 'professional_model.dart';
+import '../../servico/models/service_model.dart';
+import '../../profissional/models/professional_model.dart';
 
 class Appointment {
   final ServiceModel servico;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'home_screen.dart';
+import '../../salao/screens/home_screen.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});

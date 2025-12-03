@@ -1,6 +1,6 @@
-import 'package:barber_reserve/models/user_model.dart';
-import 'package:barber_reserve/services/api_service.dart';
-import 'package:barber_reserve/services/auth_service.dart';
+import 'package:barber_reserve/modules/usuario/models/user_model.dart';
+import 'package:barber_reserve/core/api/api_service.dart';
+import 'package:barber_reserve/core/auth/auth_service.dart';
 
 class UserService {
   /// GET /api/usuario/me/  -> dados do usuário logado

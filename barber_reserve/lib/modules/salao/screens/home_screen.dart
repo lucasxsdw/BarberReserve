@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'services_screen.dart';
-import 'profile_screen.dart';
+import '../../servico/screens/services_screen.dart';
+import '../../usuario/screens/profile_screen.dart';
 
 class TelaInicial extends StatefulWidget {
   const TelaInicial({super.key});

@@ -1,9 +1,9 @@
 // lib/screens/salon_register_screen.dart
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/models/user_model.dart';
-import 'package:barber_reserve/services/auth_service.dart';
-import 'package:barber_reserve/services/api_service.dart';
-import 'package:barber_reserve/screens/professionals_register.dart'; // 👈 NOVO IMPORT
+import 'package:barber_reserve/modules/usuario/models/user_model.dart';
+import 'package:barber_reserve/core/auth/auth_service.dart';
+import 'package:barber_reserve/core/api/api_service.dart';
+import 'package:barber_reserve/modules/profissional/screens/professionals_register.dart';
 
 class SalonRegisterScreen extends StatefulWidget {
   final UserModel user;
@@ -61,9 +61,12 @@ class _SalonRegisterScreenState extends State<SalonRegisterScreen> {
     try {
       final token = await AuthService.getToken();
       if (token == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Você precisa estar logado.')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Você precisa estar logado.')),
+          );
+          setState(() => _saving = false);
+        }
         return;
       }
 
@@ -76,9 +79,9 @@ class _SalonRegisterScreenState extends State<SalonRegisterScreen> {
       if (!mounted) return;
 
       if (res["statusCode"] == 200 || res["statusCode"] == 201) {
-        // 👇 Pega o ID e o nome do salão retornado pela API
+        // pega o ID e o nome do salão retornado pela API
         final body = res["body"];
-        final salaoId = body["id"]; // ajuste aqui se o campo for outro (ex: "pk")
+        final salaoId = body["id"]; // se no backend for outro campo, ajusta aqui
         final salaoNome = body["nome"] ?? nomeSalao;
 
         if (salaoId == null) {
@@ -91,13 +94,12 @@ class _SalonRegisterScreenState extends State<SalonRegisterScreen> {
           return;
         }
 
-        // 👉 Vai para a tela de cadastro de profissional
+        // vai para a tela de cadastro de profissional
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => ProfessionalsRegisterScreen(
-              salaoId: salaoId,
-              salaoNome: salaoNome,
+            builder: (_) => ProfessionalRegisterScreen(
+              salonName: salaoNome,
             ),
           ),
         );

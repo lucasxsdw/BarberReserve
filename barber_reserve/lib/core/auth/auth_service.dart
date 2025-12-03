@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'api_service.dart';
+import '../api/api_service.dart';
 
 class AuthService {
   static const _storage = FlutterSecureStorage();

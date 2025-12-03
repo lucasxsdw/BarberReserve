@@ -1,8 +1,8 @@
-import 'package:barber_reserve/screens/login_screen.dart';
+import 'package:barber_reserve/modules/auth/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/services/api_service.dart';
-import 'package:barber_reserve/screens/role_selection_screen.dart';
-import 'package:barber_reserve/services/auth_service.dart';
+import 'package:barber_reserve/core/api/api_service.dart';
+import 'package:barber_reserve/modules/auth/screens/role_selection_screen.dart';
+import 'package:barber_reserve/core/auth/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
