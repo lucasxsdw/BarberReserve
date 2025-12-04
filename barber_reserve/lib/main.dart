@@ -1,3 +1,4 @@
+import 'package:barber_reserve/modules/salao/screens/salon_list.dart';
 import 'package:flutter/material.dart';
 // import 'package:barber_reserve/screens/professionals_register.dart';
 //import 'package:barber_reserve/screens/services_screen.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(// apenas isso é necessário
+      home: LoginScreen( // apenas isso é necessário
       ),
     );
   }

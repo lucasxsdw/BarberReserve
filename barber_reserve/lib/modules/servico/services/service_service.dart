@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:barber_reserve/modules/servico/models/service_model.dart';
 import 'package:barber_reserve/core/auth/auth_service.dart';
 import 'package:barber_reserve/modules/agendamento/models/appointment_model.dart';
+import 'package:http/http.dart' as ApiService;
 import '../../profissional/services/professional_service.dart'; // aproveita o ApiException
 
 class ServiceService {
@@ -98,6 +99,24 @@ class ServiceService {
     );
 
     if (response.statusCode != 204) {
+      throw ApiException(response.statusCode, response.body);
+    }
+  }
+
+
+  // Buscar serviços de um salão específico
+  static Future<List<ServiceModel>> getServicosDoSalao(int salaoId) async {
+    final headers = await AuthService.authHeaders();
+
+    final response = await http.get(
+      Uri.parse("$_baseUrl?salao_id=$salaoId"),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((e) => ServiceModel.fromJson(e)).toList();
+    } else {
       throw ApiException(response.statusCode, response.body);
     }
   }

@@ -1,3 +1,4 @@
+import 'package:barber_reserve/modules/salao/screens/salon_list.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/modules/usuario/services/user_service.dart';
 import 'package:barber_reserve/modules/salao/screens/salon_register_screen.dart';
@@ -35,7 +36,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const ServicesScreen(),
+            builder: (_) => const HomeSalonsScreen(),
+
           ),
         );
       } else {

@@ -6,8 +6,12 @@ import '../services/service_service.dart';
 import '../../agendamento/services/appointment_service.dart';
 
 class ServicesScreen extends StatefulWidget {
-  const ServicesScreen({super.key});
+ 
+  final int salaoId;
 
+  const ServicesScreen({super.key, required this.salaoId});
+ 
+     
   @override
   State<ServicesScreen> createState() => _ServicesScreenState();
 }
@@ -24,7 +28,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
   void initState() {
     super.initState();
     // usa método estático do service
-    futureServicos = ServiceService.getServicos();
+    futureServicos = ServiceService.getServicosDoSalao(widget.salaoId);
+
   }
 
   Widget gradientButton({

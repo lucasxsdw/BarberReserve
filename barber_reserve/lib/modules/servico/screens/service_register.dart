@@ -1,3 +1,4 @@
+import 'package:barber_reserve/modules/salao/screens/salon_list.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/modules/profissional/models/newprofessional_model.dart';
 import 'package:barber_reserve/modules/profissional/services/professional_service.dart';
@@ -133,7 +134,7 @@ class _ServiceRegisterScreenState extends State<ServiceRegisterScreen> {
       // depois de salvar, levar para a tela de serviços
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ServicesScreen()),
+        MaterialPageRoute(builder: (_) => const HomeSalonsScreen()),
       );
     } on ApiException catch (e) {
       if (!mounted) return;

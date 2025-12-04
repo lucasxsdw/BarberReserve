@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:barber_reserve/modules/salao/screens/salon_list.dart';
 import '../../servico/screens/services_screen.dart';
 import '../../usuario/screens/profile_screen.dart';
 
@@ -11,9 +12,10 @@ class TelaInicial extends StatefulWidget {
 
 class _TelaInicialState extends State<TelaInicial> {
   int _index = 0;
+
   final pages = [
     const AgendaTab(),
-    const ServicesScreen(),
+    const HomeSalonsScreen(), // <<--- aqui
     const PerfilScreen(),
   ];
 
@@ -26,14 +28,26 @@ class _TelaInicialState extends State<TelaInicial> {
         currentIndex: _index,
         onTap: (i) => setState(() => _index = i),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.event_note), label: 'Agenda'),
-          BottomNavigationBarItem(icon: Icon(Icons.content_cut), label: 'Serviços'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event_note),
+            label: 'Agenda',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(
+              AssetImage("assets/images/location.png"),
+            ),
+            label: 'Salões',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
         ],
       ),
     );
   }
 }
+
 
 class AgendaTab extends StatelessWidget {
   const AgendaTab({super.key});
