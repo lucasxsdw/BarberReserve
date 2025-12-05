@@ -154,7 +154,6 @@ class ApiService {
     );
   }
 
-  // >>> AQUI É A MUDANÇA PRINCIPAL <<<
   static Future<Map<String, dynamic>> getUserProfile(String token) async {
     return await ApiService.get(
       "usuario/me",      // <-- ALTERADO (antes era "usuario/usuario-perfil")
@@ -186,7 +185,7 @@ class ApiService {
     required List<int> profissionaisIds,
   }) async {
     return await ApiService.post(
-      "servico/servicos", // backend usa esse caminho
+      "servico/servicos", 
       {
         "nome": nome,
         "descricao": descricao,

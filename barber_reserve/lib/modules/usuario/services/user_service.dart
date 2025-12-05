@@ -30,9 +30,9 @@ class UserService {
     final token = await AuthService.getToken();
 
     final response = await ApiService.post(
-      "usuario/tipo-perfil",        // seu endpoint de update
+      "usuario/tipo-perfil",        
       {
-        "tipo_perfil": role,        // NÃO usar .toUpperCase()
+        "tipo_perfil": role,        
       },
       token: token,
     );

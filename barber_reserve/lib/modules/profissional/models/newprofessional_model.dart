@@ -16,7 +16,7 @@ class ProfessionalModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'nome': name, // é isso que o Django espera
+      'nome': name, 
     };
   }
 }

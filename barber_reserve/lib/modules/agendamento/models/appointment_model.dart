@@ -5,21 +5,24 @@ class Appointment {
   final ServiceModel servico;
   final Professional profissional;
   final DateTime data;
-  final String horario;
+  final String horaInicio;
+  final String horaFim;
 
   Appointment({
     required this.servico,
     required this.profissional,
     required this.data,
-    required this.horario,
+    required this.horaInicio,
+    required this.horaFim,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'servico_id': servico.id,
-      'profissional_id': profissional.id,
-      'data': data.toIso8601String(),
-      'horario': horario,
+      'profissional': profissional.id,
+      'servico': servico.id,
+      'data_agendada': data.toIso8601String().split("T").first,
+      'hora_inicio': horaInicio,
+      'hora_fim': horaFim,
     };
   }
 }

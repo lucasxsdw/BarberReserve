@@ -170,7 +170,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         ),
         child: Center(
           child: Text(
-            text, // 👈 agora usa o texto passado
+            text, 
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

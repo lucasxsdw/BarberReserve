@@ -418,11 +418,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
       return;
     }
 
+    String horaFim = calculeEndTime(horarioSelecionado, servicoSelecionado?.duracaoMinutos);
+
     final ag = Appointment(
       servico: servicoSelecionado!,
       profissional: profissionalSelecionado!,
       data: dataSelecionada!,
-      horario: horarioSelecionado!,
+      horaInicio: horarioSelecionado!,
+      horaFim: horaFim,
     );
 
     showDialog(
@@ -431,8 +434,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
-    // precisa existir em ServiceService:
-    // static Future<bool> enviarAgendamento(Appointment ag)
     final success = await AppointmentService.enviarAgendamento(ag);
 
     if (mounted) Navigator.pop(context);
@@ -530,7 +531,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              futureServicos = ServiceService.getServicos();
+                              futureServicos = ServiceService.getServicosDoSalao(widget.salaoId);
                             });
                           },
                           child: const Text('Tentar novamente'),
@@ -683,3 +684,22 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 }
+
+String calculeEndTime(String? horarioSelecionado, int? duracaoMinutos) {
+    if(horarioSelecionado == null || duracaoMinutos == null){
+        return "";
+    }
+
+    var horaInicio = horarioSelecionado;
+
+    var valores = horaInicio.split(":");
+    var hora = int.parse(valores[0]); 
+    var minutos = int.parse(valores[1]); 
+
+    int totalMinutos = hora * 60 + minutos + duracaoMinutos;
+
+    var horaFim = (totalMinutos ~/ 60) % 24;
+    var minutosFim = totalMinutos % 60;
+
+    return "${horaFim.toString()}:${minutosFim.toString()}";
+  }
