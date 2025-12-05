@@ -7,7 +7,7 @@ class ClienteService {
     final token = await AuthService.getToken();
 
     final response = await ApiService.post(
-      "cliente/definir",      // vira /api/cliente/definir/ na API
+      "cliente/definir",      
       {},                     // corpo vazio
       token: token,
     );

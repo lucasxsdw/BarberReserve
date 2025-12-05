@@ -9,7 +9,7 @@ class AppointmentService {
 
   static Future<bool> enviarAgendamento(Appointment ag) async {
     final headers = await AuthService.authHeaders();
-
+    
     final response = await http.post(
       Uri.parse(_baseUrl),
       headers: headers,

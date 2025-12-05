@@ -257,7 +257,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 TextButton.icon(
                   onPressed: () async {
                     await AuthService.logout();
-                    // aqui você pode navegar de volta para a tela de login:
+                    
                     // Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
                   },
                   icon: const Icon(Icons.logout, color: Colors.red),
