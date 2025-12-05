@@ -57,21 +57,23 @@ lib/
 
 ## **🖥 Estrutura da API Django**
 
-backend/
-├── agendamento/
-├── backend/          # Configurações principais do Django (settings, urls, wsgi)
-├── cliente/
-├── profissional/
-├── salao/
-├── servico/
-├── usuario/
-├── venv/             # Ambiente virtual (não sobe para o GitHub)
-├── .gitignore
-├── db.sqlite3        # Banco de dados SQLite (opcional subir no repositório)
-├── diagrama.puml     # Diagrama do projeto (PlantUML)
-├── manage.py         # Comando principal do Django
-└── requirements.txt  # Dependências da API
-
+📦 backend/
+│
+├── 📁 agendamento/
+├── 📁 backend/          /* Configurações principais do Django */
+├── 📁 cliente/
+├── 📁 profissional/
+├── 📁 salao/
+├── 📁 servico/
+├── 📁 usuario/
+│
+├── 📁 venv/             /* Ambiente virtual (não enviar para o GitHub) */
+│
+├── 📄 .gitignore
+├── 📄 db.sqlite3        /* Banco local SQLite */
+├── 📄 diagrama.puml     /* Diagrama do sistema (PlantUML) */
+├── 📄 manage.py         /* Entrada principal do Django */
+└── 📄 requirements.txt  /* Dependências da API */
 
 
 # ⚙️ **Como Rodar o Projeto Flutter**
