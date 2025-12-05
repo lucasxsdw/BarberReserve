@@ -1,4 +1,7 @@
 
+
+---
+
 # 📘 **README — Barber Reserve (Flutter + Django API)**
 
 ## 🧾 **Descrição do Projeto**
@@ -22,21 +25,19 @@ O objetivo é oferecer uma plataforma moderna, rápida e escalável.
 * Flutter 3+
 * Dart
 
-
 ### **Backend — Django**
 
 * Python 3.10+
 * Django 4+
 * Django REST Framework
 * SQLite
-* JWT Authentication (caso exista)
+* JWT Authentication
 
 ---
 
 # 📂 **Estrutura do Projeto**
 
 ## **📱 Estrutura do App Flutter**
-
 
 ```
 lib/
@@ -57,10 +58,7 @@ lib/
 
 ## **🖥 Estrutura da API Django**
 
-Perfeito! Aqui está **no mesmo formato visual do primeiro**, usando blocos estilizados em **Markdown + pseudo-CSS**, exatamente igual ao estilo anterior:
-
----
-
+```css
 📦 backend/
 │
 ├── 📁 agendamento/
@@ -82,7 +80,6 @@ Perfeito! Aqui está **no mesmo formato visual do primeiro**, usando blocos esti
 
 ---
 
-
 # ⚙️ **Como Rodar o Projeto Flutter**
 
 ### 1️⃣ Instalar dependências
@@ -93,13 +90,13 @@ flutter pub get
 
 ### 2️⃣ Configurar URL da API
 
-Edite o arquivo onde fica sua baseURL:
+Edite a baseURL:
 
 ```dart
 const String baseUrl = "http://127.0.0.1:8000/api";
 ```
 
-Para celular físico via USB:
+Para celular físico:
 
 ```dart
 const String baseUrl = "http://SEU_IP:8000/api";
@@ -121,7 +118,7 @@ flutter run
 python -m venv venv
 ```
 
-### 2️⃣ Ativar
+### 2️⃣ Ativar ambiente
 
 Windows:
 
@@ -141,7 +138,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Rodar migrações
+### 4️⃣ Aplicar migrações
 
 ```bash
 python manage.py migrate
@@ -153,7 +150,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6️⃣ Rodar servidor
+### 6️⃣ Iniciar servidor
 
 ```bash
 python manage.py runserver
@@ -163,25 +160,25 @@ python manage.py runserver
 
 # 🔗 **Principais Endpoints da API**
 
-### **Cadastro**
+### Cadastro
 
 ```
 POST /api/register/
 ```
 
-### **Login**
+### Login
 
 ```
 POST /api/login/
 ```
 
-### **Definir Perfil**
+### Definir Perfil
 
 ```
 POST /api/definir-perfil/
 ```
 
-### **Cadastrar salão / empresa**
+### Cadastrar Salão
 
 ```
 POST /api/salao/cadastrar/
@@ -193,24 +190,21 @@ POST /api/salao/cadastrar/
 
 ### 1. Criar uma conta
 
-✔ OK
+### 2. Selecionar o perfil
 
-### 2. Sistema redireciona para tela de escolha do perfil
+* Cliente
+* Profissional/Salão
 
-✔ Cliente
-✔ Profissional/Salão
+### 3. Se cliente
 
-### 3. Se escolher Cliente
+➡ Redireciona para login
+➡ Entra no sistema
 
-➡ Volta para login
-➡ Acessa o app normalmente
+### 4. Se profissional/salão
 
-### 4. Se escolher Profissional/Salão
-
-➡ Vai para o cadastro de empresa
-➡ Preenche dados
-➡ Salva
-➡ É redirecionado para o dashboard
+➡ Tela de cadastro da empresa
+➡ Salvar dados
+➡ Entra no dashboard
 
 ---
 
@@ -226,24 +220,25 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 ### ❗ Não cadastra
 
-* Banco não tem migrações
-* Endpoint errado
+* Migrações pendentes
+* Endpoint inválido
 * URL errada no Flutter
-* Model mudou e não foi migrado
+* Model alterado sem `migrate`
 
 ### ❗ 400 ou 500 no login
 
-* Campo JSON diferente do esperado
-* Senha não está sendo enviada corretamente
+* JSON enviado errado
+* Senha não bate com o banco
+* Usuário não existe
 
 ---
 
 # 🚀 **Roadmap Futuro**
 
-* Adicionar sistema de pagamentos
-* Criar módulo de avaliações
-* Criar painel web administrativo
-* Melhorar sistema de agenda inteligente
+* Pagamentos integrados
+* Sistema de avaliações
+* Painel web administrativo
+* Agenda inteligente
 
 ---
 
@@ -251,3 +246,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 Projeto interno — uso restrito.
 
+---
