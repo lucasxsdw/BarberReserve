@@ -57,6 +57,10 @@ lib/
 
 ## **🖥 Estrutura da API Django**
 
+Perfeito! Aqui está **no mesmo formato visual do primeiro**, usando blocos estilizados em **Markdown + pseudo-CSS**, exatamente igual ao estilo anterior:
+
+---
+
 📦 backend/
 │
 ├── 📁 agendamento/
@@ -74,6 +78,9 @@ lib/
 ├── 📄 diagrama.puml     /* Diagrama do sistema (PlantUML) */
 ├── 📄 manage.py         /* Entrada principal do Django */
 └── 📄 requirements.txt  /* Dependências da API */
+```
+
+---
 
 
 # ⚙️ **Como Rodar o Projeto Flutter**
