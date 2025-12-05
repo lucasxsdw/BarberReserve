@@ -110,7 +110,7 @@ class _ProfessionalAdminScreenState extends State<ProfessionalAdminScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const ProfessionalProfileScreen(),
+              builder: (_) => const UserProfileScreen(),
             ),
           );
         },

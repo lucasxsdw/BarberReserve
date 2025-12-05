@@ -25,7 +25,7 @@ class AppointmentAdminScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const ProfessionalProfileScreen(),
+              builder: (_) => const UserProfileScreen(),
             ),
           );
         },

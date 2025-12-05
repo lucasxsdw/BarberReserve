@@ -1,4 +1,4 @@
-import 'package:barber_reserve/modules/salao/screens/salao_service.dart';
+import 'package:barber_reserve/modules/salao/services/salao_service.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
 import 'package:flutter/material.dart';
 

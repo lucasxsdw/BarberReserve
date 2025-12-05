@@ -44,4 +44,33 @@ class UserService {
     print("Erro updateTipoPerfil: ${response["body"]}");
     return null;
   }
+
+    /// PATCH /api/usuario/me/ -> atualiza nome, email e telefone
+  static Future<UserModel?> updateUser({
+    String? firstName,
+    String? email,
+    String? telefone,
+  }) async {
+    final token = await AuthService.getToken();
+
+    final Map<String, dynamic> data = {};
+
+    if (firstName != null) data["first_name"] = firstName;
+    if (email != null) data["email"] = email;
+    if (telefone != null) data["telefone"] = telefone;
+
+    final res = await ApiService.patch(
+      "usuario/me",
+      data,
+      token: token,
+    );
+
+    if (res["statusCode"] == 200 && res["body"] is Map<String, dynamic>) {
+      return UserModel.fromJson(res["body"]);
+    }
+
+    print("Erro updateUser: ${res["statusCode"]} -> ${res["body"]}");
+    return null;
+  }
+
 }
