@@ -123,17 +123,13 @@ class _SalonRegisterScreenState extends State<SalonRegisterScreen> {
   }
 
   /// Clica 2x só pra animar os steps; no 3º clique chama `_onNext()`
-  void _onPressButton() {
-    if (_saving) return;
+  /// Ao clicar, vai direto para a próxima etapa (sem animar steps)
+void _onPressButton() {
+  if (_saving) return;
 
-    if (_step < 2) {
-      setState(() {
-        _step++;
-      });
-    } else {
-      _onNext();
-    }
-  }
+  _onNext(); // chama diretamente a próxima página
+}
+
 
   @override
   Widget build(BuildContext context) {
