@@ -208,39 +208,8 @@ POST /api/salao/cadastrar/
 
 ---
 
-# 🐞 **Erros Comuns e Soluções**
 
-### ❗ CORS ERROR
 
-Adicionar no Django:
-
-```python
-CORS_ALLOW_ALL_ORIGINS = True
-```
-
-### ❗ Não cadastra
-
-* Migrações pendentes
-* Endpoint inválido
-* URL errada no Flutter
-* Model alterado sem `migrate`
-
-### ❗ 400 ou 500 no login
-
-* JSON enviado errado
-* Senha não bate com o banco
-* Usuário não existe
-
----
-
-# 🚀 **Roadmap Futuro**
-
-* Pagamentos integrados
-* Sistema de avaliações
-* Painel web administrativo
-* Agenda inteligente
-
----
 
 # 📜 **Licença**
 
