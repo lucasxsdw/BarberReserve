@@ -37,7 +37,6 @@ O objetivo é oferecer uma plataforma moderna, rápida e escalável.
 
 ## **📱 Estrutura do App Flutter**
 
-*(baseada na sua imagem enviada)*
 
 ```
 lib/
@@ -58,12 +57,21 @@ lib/
 
 ## **🖥 Estrutura da API Django**
 
-📌 **COLOQUE A IMAGEM AQUI**
+BACKEND
+├── agendamento/
+├── backend/
+├── cliente/
+├── profissional/
+├── salao/
+├── servico/
+├── usuario/
+├── venv/
+├── .gitignore
+├── db.sqlite3
+├── diagrama.puml
+├── manage.py
+└── requirements.txt
 
-> 🔲 *INSERIR A IMAGEM DA ESTRUTURA DA API DJANGO AQUI*
-> (Quando você conseguir gerar a imagem, basta adicioná-la nesta seção do README)
-
----
 
 # ⚙️ **Como Rodar o Projeto Flutter**
 
