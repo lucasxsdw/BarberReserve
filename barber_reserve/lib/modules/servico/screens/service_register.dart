@@ -312,26 +312,7 @@ class _ServiceRegisterScreenState extends State<ServiceRegisterScreen> {
                           // Botões Voltar / Concluir
                           Row(
                             children: [
-                              Expanded(
-                                child: OutlinedButton(
-                                  onPressed:
-                                      _saving ? null : () => Navigator.pop(context),
-                                  style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    "Voltar",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              
                               const SizedBox(width: 12),
                               Expanded(
                                 child: SizedBox(
@@ -376,6 +357,7 @@ class _ServiceRegisterScreenState extends State<ServiceRegisterScreen> {
                                                 "Concluir",
                                                 style: TextStyle(
                                                   fontSize: 16,
+                                                  color: Color.fromARGB(255, 255, 255, 255),
                                                   fontWeight:
                                                       FontWeight.w600,
                                                 ),

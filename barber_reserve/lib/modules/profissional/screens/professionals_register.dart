@@ -1,3 +1,4 @@
+import 'package:barber_reserve/modules/salao/screens/salon_register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/modules/profissional/models/newprofessional_model.dart';
 import 'package:barber_reserve/modules/profissional/services/professional_service.dart';
@@ -47,14 +48,19 @@ class _ProfessionalRegisterScreenState
   }
 
   Future<void> _ensureAuthenticated() async {
-    final token = await AuthService.getToken();
-    if (token == null || token.isEmpty) {
-      if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-        (route) => false,
-      );
+  final token = await AuthService.getToken();
+  
+  if (token == null || token.isEmpty) {
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  
+
+
+
     }
   }
 
@@ -276,27 +282,7 @@ class _ProfessionalRegisterScreenState
                     // Botões Voltar / Prosseguir
                     Row(
                       children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: _saving ? null : () {
-                              Navigator.pop(context);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: const Text(
-                              "Voltar",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ),
+                        
                         const SizedBox(width: 12),
                         Expanded(
                           child: SizedBox(
@@ -342,6 +328,7 @@ class _ProfessionalRegisterScreenState
                                               "Prosseguir",
                                               style: TextStyle(
                                                 fontSize: 16,
+                                                color: Color.fromARGB(255, 255, 255, 255),
                                                 fontWeight:
                                                     FontWeight.w600,
                                               ),
