@@ -75,8 +75,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         return;
       }
 
-      // aqui assumo que a API devolve algo como:
-      // { "id": 1, "email": "...", "tipo_perfil": "salao" }
+      
       final tipoPerfil = profileBody["tipo_perfil"]?.toString();
 
       // 3) decide a tela de acordo com o tipo_perfil

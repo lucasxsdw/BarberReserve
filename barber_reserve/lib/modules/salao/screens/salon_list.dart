@@ -1,4 +1,4 @@
-import 'package:barber_reserve/modules/salao/screens/salao_service.dart';
+import 'package:barber_reserve/modules/salao/services/salao_service.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +95,7 @@ class _HomeSalonsScreenState extends State<HomeSalonsScreen> {
 
                     const SizedBox(height: 20),
 
-                    // 🔥 EXIBIR CARDS DA API
+                    
                     Column(
                       children: saloes.map((s) {
                         return _salonCard(
@@ -214,7 +214,7 @@ Widget _salonCard({
               ),
               const SizedBox(height: 16),
 
-              // 🔥 Botão com navegação passando o salaoId
+              
               SizedBox(
                 width: double.infinity,
                 child: _buttonVerServicos(salaoId),

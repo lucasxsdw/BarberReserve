@@ -1,483 +1,290 @@
 import 'package:flutter/material.dart';
-import 'package:barber_reserve/modules/salao/screens/salao_admin_screen.dart';
-import 'package:barber_reserve/modules/salao/widgets/admin_bottom_nav.dart';
-import 'package:barber_reserve/core/auth/auth_service.dart';
-import 'package:barber_reserve/core/widgets/logout_button.dart';
 
-class ProfessionalProfileScreen extends StatelessWidget {
-  const ProfessionalProfileScreen({super.key});
+import 'package:barber_reserve/modules/usuario/models/user_model.dart';
+import 'package:barber_reserve/modules/usuario/services/user_service.dart';
+
+// bottom nav reutilizado
+import 'package:barber_reserve/modules/salao/widgets/admin_bottom_nav.dart';
+// tela de painel do cliente (mude aqui se for outra)
+import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
+import 'package:barber_reserve/modules/salao/screens/salao_admin_screen.dart';
+
+class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({super.key});
+
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  UserModel? _user;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    setState(() => _loading = true);
+
+    final user = await UserService.getMe();
+
+    setState(() {
+      _user = user;
+      _loading = false;
+    });
+  }
+
+  // ============================
+  // MODAL DE EDIÇÃO
+  // ============================
+
+  Future<void> _openEditDialog() async {
+    final nomeCtrl = TextEditingController(text: _user?.name ?? "");
+    final emailCtrl = TextEditingController(text: _user?.email ?? "");
+    final phoneCtrl = TextEditingController(text: _user?.phone ?? "");
+
+    bool saving = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: !saving,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text(
+                "Editar informações",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nomeCtrl,
+                    decoration: const InputDecoration(
+                      labelText: "Nome",
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: emailCtrl,
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: phoneCtrl,
+                    decoration: const InputDecoration(
+                      labelText: "Telefone",
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: saving ? null : () => Navigator.pop(context),
+                  child: const Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  onPressed: saving
+                      ? null
+                      : () async {
+                          setStateDialog(() => saving = true);
+
+                          try {
+                            final updated = await UserService.updateUser(
+                              firstName: nomeCtrl.text.trim(),
+                              email: emailCtrl.text.trim(),
+                              telefone: phoneCtrl.text.trim(),
+                            );
+
+                            if (updated != null) {
+                              if (mounted) {
+                                Navigator.pop(context);
+                                await _loadUser();
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      "Erro ao atualizar informações"),
+                                ),
+                              );
+                            }
+                          } finally {
+                            setStateDialog(() => saving = false);
+                          }
+                        },
+                  child: saving
+                      ? const SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text("Salvar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ============================
+  // WIDGET PARA EXIBIR LINHA DE INFO
+  // ============================
+
+  Widget _infoTile(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 15),
+        ),
+      ],
+    );
+  }
+
+  // ============================
+  // TELA PRINCIPAL
+  // ============================
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_user == null) {
+      return const Scaffold(
+        body: Center(child: Text("Erro ao carregar usuário")),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F9),
 
+      // ====== BOTTOM NAV: PAINEL / PERFIL ======
       bottomNavigationBar: AdminBottomNav(
-        currentTab: AdminTab.perfil,
+        currentTab: AdminTab.perfil, // estamos na aba Perfil
         onPainelTap: () {
-          // Voltar para o painel administrativo
-          Navigator.pushAndRemoveUntil(
+          // vai para o "painel" do cliente (serviços para agendar)
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const SalaoAdminScreen()),
-            (route) => false,
           );
         },
         onPerfilTap: () {
-          // Já está no perfil -> não faz nada
+          // já está na tela de perfil -> não faz nada
         },
       ),
+      // =========================================
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const _HeaderProfessional(),
-
-              const SizedBox(height: 16),
-              const _StatsRow(),
-
-              const SizedBox(height: 16),
-              const _ProfessionalInfoCard(),
-
-              const SizedBox(height: 16),
-              const _TodayScheduleCard(),
-
-              const SizedBox(height: 16),
-              LogoutButton(
-                onTap: () async {
-                  await AuthService.logout();  // usa o método static
-
-                  // volta para a tela de login limpando o histórico
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (route) => false,
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _HeaderProfessional extends StatelessWidget {
-  const _HeaderProfessional();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF2F80ED),
-            Color(0xFF56CCF2),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              size: 36,
-              color: Color(0xFF2F80ED),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "João Profissional",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "joao@salao.com",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  "Administrador do salão",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  const _StatsRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: const [
-          Expanded(
-            child: _StatCard(
-              title: "Serviços hoje",
-              value: "3",
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: _StatCard(
-              title: "Total serviços",
-              value: "124",
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-
-  const _StatCard({
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfessionalInfoCard extends StatelessWidget {
-  const _ProfessionalInfoCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
           children: [
-            Row(
-              children: [
-                const Icon(Icons.badge_outlined, size: 20),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    "Informações profissionais",
-                    style: TextStyle(
-                      fontSize: 15,
+            // HEADER COM NOME + EMAIL
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF4A90E2), Color(0xFF6A5AE0)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _user!.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: abrir tela de edição do perfil
-                  },
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text("Editar"),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                  const SizedBox(height: 4),
+                  Text(
+                    _user!.email,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
                     ),
-                    textStyle: const TextStyle(fontSize: 13),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
 
-            // E-mail
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.email_outlined, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "E-mail",
+            const SizedBox(height: 20),
+
+            // CARD DE INFORMAÇÕES
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // título + botão editar
+                  Row(
+                    children: [
+                      const Text(
+                        "Informações pessoais",
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 2),
-                      Text(
-                        "joao@salao.com",
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: _openEditDialog,
+                        icon: const Icon(Icons.edit_outlined),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
 
-            const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-            // Telefone
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.phone_outlined, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Telefone",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        "(77) 99999-9999",
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                  _infoTile("Nome", _user!.name),
+                  const SizedBox(height: 12),
 
-            const SizedBox(height: 12),
+                  _infoTile("Email", _user!.email),
+                  const SizedBox(height: 12),
 
-            // Especialidade
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.content_cut, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Especialidade",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        "Corte masculino, barba e sobrancelha",
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                  _infoTile("Telefone", _user!.phone ?? "Não informado"),
+                ],
+              ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _TodayScheduleCard extends StatelessWidget {
-  const _TodayScheduleCard();
-
-  @override
-  Widget build(BuildContext context) {
-    // Por enquanto, dados fake só para layout
-    final items = [
-      _ScheduleItemData(
-        service: "Corte masculino",
-        client: "Carlos Santos",
-        time: "Hoje · 14:00",
-        price: "R\$ 35",
-      ),
-      _ScheduleItemData(
-        service: "Barba completa",
-        client: "Lucas Souza",
-        time: "Hoje · 15:00",
-        price: "R\$ 25",
-      ),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: const [
-                Icon(Icons.schedule_outlined, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  "Agenda de hoje",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            for (final item in items) ...[
-              _ScheduleItem(data: item),
-              const SizedBox(height: 8),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleItemData {
-  final String service;
-  final String client;
-  final String time;
-  final String price;
-
-  _ScheduleItemData({
-    required this.service,
-    required this.client,
-    required this.time,
-    required this.price,
-  });
-}
-
-class _ScheduleItem extends StatelessWidget {
-  final _ScheduleItemData data;
-
-  const _ScheduleItem({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: Colors.grey.shade300,
-          width: 0.8,
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.service,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  data.time,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                Text(
-                  data.client,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            data.price,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
       ),
     );
   }
