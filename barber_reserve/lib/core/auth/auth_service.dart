@@ -85,6 +85,7 @@ static Future<Map<String, dynamic>> register({
 
     return await ApiService.getUserProfile(token);
   }
+  
 }
 
  

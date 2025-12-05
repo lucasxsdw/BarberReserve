@@ -154,9 +154,10 @@ class ApiService {
     );
   }
 
+  // >>> AQUI É A MUDANÇA PRINCIPAL <<<
   static Future<Map<String, dynamic>> getUserProfile(String token) async {
     return await ApiService.get(
-      "usuario/usuario-perfil",
+      "usuario/me",      // <-- ALTERADO (antes era "usuario/usuario-perfil")
       token: token,
     );
   }

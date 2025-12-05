@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:barber_reserve/modules/usuario/services/user_service.dart';
 import 'package:barber_reserve/modules/salao/screens/salon_register_screen.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
+import 'package:barber_reserve/modules/cliente/services/cliente_service.dart';
+import 'package:barber_reserve/modules/usuario/models/user_model.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -19,8 +21,15 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     setState(() => _loading = true);
 
     try {
-      // Atualiza tipo_perfil no backend (CLIENTE ou SALAO)
-      final user = await UserService.updateTipoPerfil(role);
+      UserModel? user;
+
+      if (role == 'cliente') {
+        // chama /api/cliente/definir/
+        user = await ClienteService.definirComoCliente();
+      } else {
+        // aqui consideramos que role == 'salao'
+        user = await UserService.updateTipoPerfil('salao');
+      }
 
       if (!mounted) return;
 
@@ -31,8 +40,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         return;
       }
 
-      if (role == 'CLIENTE') {
-        // 👉 CLIENTE -> vai pra tela de serviços
+      if (role == 'cliente') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -41,12 +49,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           ),
         );
       } else {
-        // 👉 SALAO -> vai pra tela de cadastro de salão, passando o USER
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => SalonRegisterScreen(user: user),
-          ),
+          MaterialPageRoute(builder: (_) => SalonRegisterScreen(user: user!)),
         );
       }
     } catch (e) {
@@ -113,13 +118,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                         _buildGradientButton(
                           text: "CLIENTE",
                           enabled: !_loading,
-                          onTap: () => _selectRole('CLIENTE'),
+                          onTap: () => _selectRole('cliente'),
                         ),
                         const SizedBox(height: 20),
                         _buildGradientButton(
                           text: "PROFISSIONAL/ SALÃO",
                           enabled: !_loading,
-                          onTap: () => _selectRole('SALAO'),
+                          onTap: () => _selectRole('salao'),
                         ),
                       ],
                     ),
@@ -165,7 +170,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         ),
         child: Center(
           child: Text(
-            text,
+            text, // 👈 agora usa o texto passado
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

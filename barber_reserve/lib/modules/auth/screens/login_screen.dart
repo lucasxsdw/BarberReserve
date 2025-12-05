@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+
 import 'package:barber_reserve/modules/auth/screens/register_screen.dart';
 import 'package:barber_reserve/core/api/api_service.dart';
-import 'package:flutter/material.dart';
-import 'package:barber_reserve/modules/salao/screens/home_screen.dart';
 import 'package:barber_reserve/core/auth/auth_service.dart';
 
+// telas pós-login
+import 'package:barber_reserve/modules/salao/screens/home_screen.dart';           // TelaInicial (cliente)
+import 'package:barber_reserve/modules/salao/screens/salao_admin_screen.dart';   // Painel do salão
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback? onLogin;
@@ -32,41 +35,78 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   // FUNÇÃO DE LOGIN
   // ==========================================
   Future<void> _doLogin() async {
-  final email = _email.text.trim();
-  final password = _password.text.trim();
+    final email = _email.text.trim();
+    final password = _password.text.trim();
 
-  if (email.isEmpty || password.isEmpty) {
-    _showMessage("Preencha todos os campos.");
-    return;
-  }
-
-  setState(() => isLoading = true);
-
-  try {
-    final response = await AuthService.login(
-      email: email,
-      password: password,
-    );
-    
-
-    final body = response["body"];
-
-    if (response["statusCode"] == 200 && body["access"] != null) {
-      _showMessage("Login realizado com sucesso!");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const  TelaInicial()),
-);
- // Vai para Home
-    } else {
-      _showMessage(body["detail"] ?? "Credenciais inválidas.");
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage("Preencha todos os campos.");
+      return;
     }
-  } catch (e) {
-    _showMessage("Erro ao conectar ao servidor.");
-  }
 
-  setState(() => isLoading = false);
-}
+    setState(() => isLoading = true);
+
+    try {
+      // 1) faz login e salva o token (AuthService já escreve no storage)
+      final response = await AuthService.login(
+        email: email,
+        password: password,
+      );
+
+      final statusCode = response["statusCode"] as int;
+      final body = response["body"];
+
+      if (statusCode != 200 || body["access"] == null) {
+        _showMessage(body["detail"]?.toString() ?? "Credenciais inválidas.");
+        return;
+      }
+
+      _showMessage("Login realizado com sucesso!");
+
+      // 2) busca o perfil do usuário pra descobrir o tipo_perfil
+      final profileRes = await AuthService.getProfile();
+      final profileStatus = profileRes["statusCode"] as int;
+      final profileBody = profileRes["body"];
+
+      print('PROFILE RES -> $profileRes');
+      print('PROFILE BODY -> $profileBody');
+
+      if (profileStatus != 200 || profileBody == null) {
+        _showMessage("Não foi possível carregar o perfil do usuário.");
+        return;
+      }
+
+      // aqui assumo que a API devolve algo como:
+      // { "id": 1, "email": "...", "tipo_perfil": "salao" }
+      final tipoPerfil = profileBody["tipo_perfil"]?.toString();
+
+      // 3) decide a tela de acordo com o tipo_perfil
+      if (tipoPerfil == "salao") {
+        // 🔵 usuário SALÃO → painel administrativo
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const SalaoAdminScreen(),
+          ),
+        );
+      } else if (tipoPerfil == "cliente") {
+        // 🟢 usuário CLIENTE → tela inicial do cliente
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const TelaInicial(),
+          ),
+        );
+      } else {
+        _showMessage("Perfil desconhecido: $tipoPerfil");
+      }
+    } catch (e) {
+      _showMessage("Erro ao conectar ao servidor.");
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
 
   // ==========================================
   // SNACKBAR
@@ -128,7 +168,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       ),
                     ],
                   ),
-
                   child: Column(
                     children: [
                       const Text(
@@ -146,68 +185,71 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       const SizedBox(height: 16),
 
                       // BOTÕES ENTRAR / CADASTRAR
-                  
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD9D9D9),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Row(
-                    children: [
-                      // BOTÃO ENTRAR
-                      Expanded(
-                        child: GestureDetector(
-          
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 6),
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Entrar',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9D9D9),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Row(
+                          children: [
+                            // BOTÃO ENTRAR
+                            Expanded(
+                              child: GestureDetector(
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 6),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'Entrar',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
 
-                      // BOTÃO CADASTRAR
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Cadastrar',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                            // BOTÃO CADASTRAR
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'Cadastrar',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
 
                       const SizedBox(height: 24),
 
@@ -230,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           hintText: 'seu@email.com',
                           filled: true,
                           fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
+                          prefixIcon: const Icon(Icons.email_outlined,
+                              color: Colors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -260,7 +303,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           hintText: '********',
                           filled: true,
                           fillColor: const Color(0xFFD9D9D9),
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                          prefixIcon: const Icon(Icons.lock_outline,
+                              color: Colors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -292,7 +336,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                           onPressed: isLoading ? null : _doLogin,
                           child: isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
                               : const Text(
                                   'Entrar',
                                   style: TextStyle(
@@ -305,8 +351,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       ),
 
                       const SizedBox(height: 12),
-
-                      
                     ],
                   ),
                 ),

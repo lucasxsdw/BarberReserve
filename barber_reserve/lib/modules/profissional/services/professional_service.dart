@@ -14,8 +14,6 @@ class ApiException implements Exception {
 }
 
 class ProfessionalService {
-  // Emulador Android → use 10.0.2.2
-  // Celular físico/Web → localhost ou IP da máquinag
   static const String _baseUrl = 'http://localhost:8000/api/profissional/';
 
   static Future<ProfessionalModel> createProfessional(
@@ -48,6 +46,41 @@ class ProfessionalService {
       final List data = jsonDecode(response.body);
       return data.map((e) => ProfessionalModel.fromJson(e)).toList();
     } else {
+      throw ApiException(response.statusCode, response.body);
+    }
+  }
+
+  static Future<ProfessionalModel> updateProfessional(
+      ProfessionalModel professional) async {
+    if (professional.id == null) {
+      throw ArgumentError('ProfessionalModel.id não pode ser null para update');
+    }
+
+    final headers = await AuthService.authHeaders();
+
+    final response = await http.put(
+      Uri.parse('$_baseUrl${professional.id}/'),
+      headers: headers,
+      body: jsonEncode(professional.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return ProfessionalModel.fromJson(data);
+    } else {
+      throw ApiException(response.statusCode, response.body);
+    }
+  }
+
+  static Future<void> deleteProfessional(int id) async {
+    final headers = await AuthService.authHeaders();
+
+    final response = await http.delete(
+      Uri.parse('$_baseUrl$id/'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 204 && response.statusCode != 200) {
       throw ApiException(response.statusCode, response.body);
     }
   }

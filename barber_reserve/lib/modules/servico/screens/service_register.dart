@@ -4,6 +4,8 @@ import 'package:barber_reserve/modules/profissional/models/newprofessional_model
 import 'package:barber_reserve/modules/profissional/services/professional_service.dart';
 import 'package:barber_reserve/modules/servico/services/service_service.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
+import 'package:barber_reserve/modules/salao/screens/salao_admin_screen.dart';
+
 
 class ServiceRegisterScreen extends StatefulWidget {
   const ServiceRegisterScreen({super.key});
@@ -132,9 +134,10 @@ class _ServiceRegisterScreenState extends State<ServiceRegisterScreen> {
       );
 
       // depois de salvar, levar para a tela de serviços
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeSalonsScreen()),
+        MaterialPageRoute(builder: (_) => const SalaoAdminScreen()),
+        (route) => false,
       );
     } on ApiException catch (e) {
       if (!mounted) return;

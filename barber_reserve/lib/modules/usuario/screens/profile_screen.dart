@@ -45,11 +45,18 @@ class _PerfilScreenState extends State<PerfilScreen> {
           }
 
           final data = snapshot.data!;
+          final statusCode = data["statusCode"] as int? ?? 0;
           final body = data["body"] ?? {};
-          final String nome = body["nome"] ?? "Usuário";
-          final String email = body["email"] ?? "";
-          final String telefone = body["telefone"] ?? "(sem telefone)";
 
+          if (statusCode != 200 || body == null) {
+            return const Center(child: Text('Erro ao carregar perfil'));
+          }
+
+          // backend pode devolver first_name OU nome (garantimos os dois)
+          final String nome =
+              body["first_name"] ?? body["nome"] ?? "Usuário";
+          final String email = body["email"] ?? "";
+          final String telefone = body["telefone"] ?? "";
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -70,7 +77,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     children: [
                       const CircleAvatar(
                         radius: 30,
-                        backgroundImage: AssetImage('assets/images/profile.jpg'),
+                        backgroundImage:
+                            AssetImage('assets/images/profile.jpg'),
                       ),
                       const SizedBox(width: 16),
                       Column(
@@ -98,7 +106,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Estatísticas (ainda fixas por enquanto)
+                // Estatísticas (mock)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -120,7 +128,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.person_outline, color: Colors.black54),
+                          const Icon(Icons.person_outline,
+                              color: Colors.black54),
                           const SizedBox(width: 8),
                           const Text(
                             'Informações Pessoais',
@@ -136,12 +145,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                 horizontal: 8,
                                 vertical: 0,
                               ),
-                              side: const BorderSide(color: Colors.black54),
+                              side:
+                                  const BorderSide(color: Colors.black54),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              // TODO: abrir modal/tela pra editar nome/telefone
+                              // e depois enviar PATCH para /api/usuario/me/
+                            },
                             icon: const Icon(Icons.edit_outlined, size: 16),
                             label: const Text(
                               'Editar',
@@ -166,13 +179,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 28, top: 4),
+                        padding:
+                            const EdgeInsets.only(left: 28, top: 4),
                         child: Text(email),
                       ),
                       const SizedBox(height: 12),
-                     const Row(
+                      const Row(
                         children: [
-                          Icon(Icons.phone_outlined, color: Colors.black54, size: 20),
+                          Icon(Icons.phone_outlined,
+                              color: Colors.black54, size: 20),
                           SizedBox(width: 8),
                           Text(
                             'Telefone',
@@ -181,15 +196,20 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 28, top: 4),
-                        child: Text(telefone),
+                        padding:
+                            const EdgeInsets.only(left: 28, top: 4),
+                        child: Text(
+                          telefone.isEmpty
+                              ? '(sem telefone cadastrado)'
+                              : telefone,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Histórico de agendamentos (mock por enquanto)
+                // Histórico de agendamentos (mock)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -237,8 +257,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 TextButton.icon(
                   onPressed: () async {
                     await AuthService.logout();
-                    // aqui você pode navegar de volta pra tela de login se quiser
-                    // Navigator.pushReplacement(...);
+                    // aqui você pode navegar de volta para a tela de login:
+                    // Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
                   },
                   icon: const Icon(Icons.logout, color: Colors.red),
                   label: const Text(
@@ -281,7 +301,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(color: Colors.black54, fontSize: 13),
+              style: const TextStyle(
+                color: Colors.black54,
+                fontSize: 13,
+              ),
             ),
           ],
         ),
@@ -307,11 +330,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
           CircleAvatar(
             radius: 16,
             backgroundColor: Colors.grey[300],
-            backgroundImage: avatar != null ? AssetImage(avatar) : null,
+            backgroundImage:
+                avatar != null ? AssetImage(avatar) : null,
             child: avatar == null
                 ? const Text(
                     'A',
-                    style: TextStyle(color: Colors.black87, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 16,
+                    ),
                   )
                 : null,
           ),

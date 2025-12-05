@@ -26,27 +26,22 @@ class UserService {
   }
 
   /// PATCH /api/usuario/me/  -> atualiza tipo_perfil (CLIENTE ou SALAO)
-  static Future<UserModel?> updateTipoPerfil(String tipoPerfil) async {
+  static Future<UserModel?> updateTipoPerfil(String role) async {
     final token = await AuthService.getToken();
 
-    if (token == null) {
-      print('UserService.updateTipoPerfil: token nulo (usuário não logado)');
-      return null;
-    }
-
-    final res = await ApiService.patch(
-      "usuario/me",
+    final response = await ApiService.post(
+      "usuario/tipo-perfil",        // seu endpoint de update
       {
-        "tipo_perfil": tipoPerfil,
+        "tipo_perfil": role,        // NÃO usar .toUpperCase()
       },
       token: token,
     );
 
-    if (res["statusCode"] == 200 && res["body"] is Map<String, dynamic>) {
-      return UserModel.fromJson(res["body"] as Map<String, dynamic>);
+    if (response["statusCode"] == 200) {
+      return UserModel.fromJson(response["body"]);
     }
 
-    print("UserService.updateTipoPerfil: erro ${res["statusCode"]} -> ${res["body"]}");
+    print("Erro updateTipoPerfil: ${response["body"]}");
     return null;
   }
 }
