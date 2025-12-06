@@ -2,7 +2,7 @@ import '../../servico/models/service_model.dart';
 import '../../profissional/models/professional_model.dart';
 
 class Appointment {
-  final int? id;                     // agora é OPCIONAL
+  final int? id;
   final ServiceModel servico;
   final Professional profissional;
   final DateTime data;
@@ -10,7 +10,7 @@ class Appointment {
   final String horaFim;
 
   Appointment({
-    this.id,                         // pode ser null
+    this.id,
     required this.servico,
     required this.profissional,
     required this.data,
@@ -18,19 +18,43 @@ class Appointment {
     required this.horaFim,
   });
 
-  /// Vindo da API (para LISTAR no admin)
   factory Appointment.fromJson(Map<String, dynamic> json) {
+    final dynamic servicoJson = json['servico'];
+    final dynamic profJson = json['profissional'];
+
+    // ---- tratar SERVIÇO (pode vir objeto ou ID) ----
+    late final ServiceModel servicoModel;
+
+    if (servicoJson is Map<String, dynamic>) {
+      // formato completo: { id, nome, preco, ... }
+      servicoModel = ServiceModel.fromJson(servicoJson);
+    } else if (servicoJson is int) {
+      // só o ID -> cria um "placeholder" mínimo
+      servicoModel = ServiceModel(
+        id: servicoJson,
+        titulo: 'Serviço #$servicoJson',
+        descricao: null,
+        preco: 0.0,
+        duracaoMinutos: 0,
+        profissionais: const [],
+      );
+    } else {
+      throw Exception('Formato inesperado de servico: $servicoJson');
+    }
+
+    // ---- tratar PROFISSIONAL (seu Professional já aceita int/map/string) ----
+    final profissionalModel = Professional.fromJson(profJson);
+
     return Appointment(
       id: json['id'] as int?,
-      servico: ServiceModel.fromJson(json['servico']),
-      profissional: Professional.fromJson(json['profissional']),
+      servico: servicoModel,
+      profissional: profissionalModel,
       data: DateTime.parse(json['data_agendada']),
       horaInicio: json['hora_inicio'] as String,
       horaFim: json['hora_fim'] as String,
     );
   }
 
-  /// Usado para ENVIAR pra API (create/update)
   Map<String, dynamic> toJson() {
     return {
       'profissional': profissional.id,
