@@ -177,8 +177,7 @@ class _AppointmentAdminScreenState extends State<AppointmentAdminScreen> {
                   const Spacer(),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // TODO: criar agendamento manual pelo painel
-                      // pode abrir um dialog ou navegar pra outra tela
+                      
                     },
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text("Novo"),
@@ -241,7 +240,7 @@ class _AppointmentAdminScreenState extends State<AppointmentAdminScreen> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              // TODO: mesmo comportamento do botão Novo lá de cima
+             
             },
             icon: const Icon(Icons.add, size: 18),
             label: const Text("Adicionar Agendamento"),

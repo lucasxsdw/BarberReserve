@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
       // 3) decide a tela de acordo com o tipo_perfil
       if (tipoPerfil == "salao") {
-        // 🔵 usuário SALÃO → painel administrativo
+       
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
           ),
         );
       } else if (tipoPerfil == "cliente") {
-        // 🟢 usuário CLIENTE → tela inicial do cliente
+       
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

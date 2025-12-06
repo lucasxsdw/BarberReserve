@@ -1,5 +1,7 @@
+import 'package:barber_reserve/core/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/core/auth/auth_service.dart';
+
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -52,7 +54,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
             return const Center(child: Text('Erro ao carregar perfil'));
           }
 
-          // backend pode devolver first_name OU nome (garantimos os dois)
+        
           final String nome =
               body["first_name"] ?? body["nome"] ?? "Usuário";
           final String email = body["email"] ?? "";
@@ -62,7 +64,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // Topo com gradiente e perfil
+                
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
@@ -106,17 +108,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Estatísticas (mock)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _infoCard('1', 'Serviços realizados'),
-                    _infoCard('R\$ 25', 'Total gasto'),
-                  ],
-                ),
+                
                 const SizedBox(height: 16),
 
-                // Informações pessoais
+                
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -152,8 +147,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                               ),
                             ),
                             onPressed: () {
-                              // TODO: abrir modal/tela pra editar nome/telefone
-                              // e depois enviar PATCH para /api/usuario/me/
+                              
                             },
                             icon: const Icon(Icons.edit_outlined, size: 16),
                             label: const Text(
@@ -209,66 +203,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Histórico de agendamentos (mock)
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.history, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text(
-                            'Histórico de agendamentos',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _agendamentoItem(
-                        nomeServico: 'Sobrancelha',
-                        preco: 'R\$ 15',
-                        data: '20/12/2024 às 14:00',
-                        profissional: 'Ana Silva',
-                        avatar: null,
-                      ),
-                      const SizedBox(height: 8),
-                      _agendamentoItem(
-                        nomeServico: 'Corte feminino',
-                        preco: 'R\$ 25',
-                        data: '20/12/2024 às 14:00',
-                        profissional: 'Carlos Santos',
-                        avatar: 'assets/images/barber.jpg',
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 16),
 
                 // Sair da conta
-                TextButton.icon(
-                  onPressed: () async {
+              LogoutButton(
+                onTap: () async {
                     await AuthService.logout();
-                    
-                    // Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
-                  },
-                  icon: const Icon(Icons.logout, color: Colors.red),
-                  label: const Text(
-                    'Sair da conta',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+                },
+              ),
+
               ],
             ),
           );

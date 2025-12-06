@@ -37,7 +37,7 @@ class SalaoService {
     );
   }
 
-  /// 👉 Buscar TODOS os salões do sistema (para a Home)
+ 
   static Future<Map<String, dynamic>> getTodosSalao() async {
     final token = await AuthService.getToken();
     return await ApiService.get(

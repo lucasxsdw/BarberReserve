@@ -37,9 +37,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
   }
 
-  // ============================
-  // MODAL DE EDIÇÃO
-  // ============================
+  
 
   Future<void> _openEditDialog() async {
     final nomeCtrl = TextEditingController(text: _user?.name ?? "");
@@ -142,9 +140,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  // ============================
-  // WIDGET PARA EXIBIR LINHA DE INFO
-  // ============================
+ 
 
   Widget _infoTile(String title, String value) {
     return Column(
@@ -166,10 +162,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  // ============================
-  // TELA PRINCIPAL
-  // ============================
-
+ 
   @override
   Widget build(BuildContext context) {
     if (_loading) {

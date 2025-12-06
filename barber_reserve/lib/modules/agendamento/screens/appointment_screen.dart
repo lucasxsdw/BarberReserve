@@ -20,7 +20,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   }
 
   Future<void> cancelarAgendamento(int id) async {
-    // exibe loading bloqueando a tela
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -36,7 +36,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         const SnackBar(content: Text('Agendamento cancelado com sucesso')),
       );
 
-      // recarrega a lista
+    
       setState(() {
         futureAgendamentos =
             AppointmentService.getAppointments();
@@ -231,7 +231,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
 
                             const SizedBox(height: 14),
 
-                            // BOTÕES EDITAR + CANCELAR
+                            
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [

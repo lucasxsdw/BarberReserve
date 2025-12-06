@@ -79,9 +79,9 @@ class _SalonRegisterScreenState extends State<SalonRegisterScreen> {
       if (!mounted) return;
 
       if (res["statusCode"] == 200 || res["statusCode"] == 201) {
-        // pega o ID e o nome do salão retornado pela API
+
         final body = res["body"];
-        final salaoId = body["id"]; // se no backend for outro campo, ajusta aqui
+        final salaoId = body["id"]; 
         final salaoNome = body["nome"] ?? nomeSalao;
 
         if (salaoId == null) {
