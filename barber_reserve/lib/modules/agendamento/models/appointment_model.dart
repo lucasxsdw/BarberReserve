@@ -2,7 +2,7 @@ import '../../servico/models/service_model.dart';
 import '../../profissional/models/professional_model.dart';
 
 class Appointment {
-  final int? id;                     // agora é OPCIONAL
+  final int? id;                     
   final ServiceModel servico;
   final Professional profissional;
   final DateTime data;
@@ -10,7 +10,7 @@ class Appointment {
   final String horaFim;
 
   Appointment({
-    this.id,                         // pode ser null
+    this.id,                         
     required this.servico,
     required this.profissional,
     required this.data,
@@ -18,7 +18,6 @@ class Appointment {
     required this.horaFim,
   });
 
-  /// Vindo da API (para LISTAR no admin)
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
       id: json['id'] as int?,
@@ -30,7 +29,6 @@ class Appointment {
     );
   }
 
-  /// Usado para ENVIAR pra API (create/update)
   Map<String, dynamic> toJson() {
     return {
       'profissional': profissional.id,
