@@ -9,6 +9,9 @@ import 'package:barber_reserve/modules/salao/widgets/admin_bottom_nav.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
 import 'package:barber_reserve/modules/salao/screens/salao_admin_screen.dart';
 
+import '../../../core/auth/auth_service.dart';
+import '../../../core/widgets/logout_button.dart';
+
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
 
@@ -273,6 +276,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   const SizedBox(height: 12),
 
                   _infoTile("Telefone", _user!.phone ?? "Não informado"),
+                
+                    LogoutButton(
+                        onTap: () async {
+                            await AuthService.logout();
+                            Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+                        },
+                    ),
+
                 ],
               ),
             ),
