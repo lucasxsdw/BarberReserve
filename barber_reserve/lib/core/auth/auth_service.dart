@@ -37,7 +37,7 @@ static Future<Map<String, dynamic>> register({
       },
     );
 
-    // salvando token JWT
+   
     if (res["statusCode"] == 200) {
       final body = res["body"];
 

@@ -1,5 +1,3 @@
-// lib/modules/agendamento/services/appointment_service.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -19,10 +17,9 @@ class ApiException implements Exception {
 class AppointmentService {
   static const String _baseUrl = 'http://localhost:8000/api/agendamento/';
 
-  // CREATE
   static Future<bool> enviarAgendamento(Appointment ag) async {
     final headers = await AuthService.authHeaders();
-     // ✅ Print para depuração
+   
     print("JSON enviado para API: ${jsonEncode(ag.toJson())}");
 
     final response = await http.post(
@@ -38,10 +35,8 @@ class AppointmentService {
     }
   }
 
-  // READ (listar agendamentos do usuário logado)
   static Future<List<Appointment>> getAppointments() async {
     final headers = await AuthService.authHeaders();
-
     final response = await http.get(
       Uri.parse(_baseUrl),
       headers: headers,
@@ -51,6 +46,7 @@ class AppointmentService {
       final data = jsonDecode(response.body);
 
       if (data is List) {
+        print(data);
         return data
             .map((item) => Appointment.fromJson(item as Map<String, dynamic>))
             .toList();
@@ -62,7 +58,6 @@ class AppointmentService {
     }
   }
 
-  // UPDATE (PATCH)
   static Future<void> updateAppointment(
       int id, Map<String, dynamic> data) async {
     final headers = await AuthService.authHeaders();
@@ -78,7 +73,6 @@ class AppointmentService {
     }
   }
 
-  // DELETE
   static Future<void> deleteAppointment(int id) async {
     final headers = await AuthService.authHeaders();
 

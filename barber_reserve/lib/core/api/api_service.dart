@@ -4,10 +4,6 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = "http://localhost:8000/api";
 
-  // =========================
-  // MÉTODOS GENÉRICOS
-  // =========================
-
   static Future<Map<String, dynamic>> post(
     String endpoint,
     Map<String, dynamic> data, {
@@ -123,10 +119,7 @@ class ApiService {
     }
   }
 
-  // =========================
-  // AUTENTICAÇÃO / USUÁRIO
-  // =========================
-
+ 
   Future<Map<String, dynamic>> login(String email, String password) async {
     return await ApiService.post(
       "usuario/login",
@@ -156,14 +149,12 @@ class ApiService {
 
   static Future<Map<String, dynamic>> getUserProfile(String token) async {
     return await ApiService.get(
-      "usuario/me",      // <-- ALTERADO (antes era "usuario/usuario-perfil")
+      "usuario/me",     
       token: token,
     );
   }
 
-  // =========================
-  // PROFISSIONAL
-  // =========================
+ 
   static Future<Map<String, dynamic>> getProfissionais(String token) async {
     return await ApiService.get(
       "profissional",
@@ -171,11 +162,7 @@ class ApiService {
     );
   }
 
-  // =========================
-  // SERVIÇOS
-  // =========================
-
-  /// Criar serviço
+ 
   static Future<Map<String, dynamic>> createServico({
     required String token,
     required String nome,
@@ -197,7 +184,7 @@ class ApiService {
     );
   }
 
-  /// Listar serviços
+  
   static Future<Map<String, dynamic>> getServicos(String token) async {
     return await ApiService.get(
       "servico/servicos",
@@ -205,7 +192,7 @@ class ApiService {
     );
   }
 
-  /// Atualizar serviço (PATCH)
+ 
   static Future<Map<String, dynamic>> updateServico({
     required String token,
     required int id,

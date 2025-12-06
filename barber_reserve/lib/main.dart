@@ -21,10 +21,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
 
-        // rota que o SALÃO usa
         '/painel-salao': (context) => const SalaoAdminScreen(),
 
-        // rota que o CLIENTE usa (troca pela tela que vc quiser)
         '/cliente-home': (context) => const HomeSalonsScreen(),
       },
     );

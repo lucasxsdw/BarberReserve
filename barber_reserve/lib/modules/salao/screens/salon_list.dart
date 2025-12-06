@@ -1,10 +1,6 @@
 import 'package:barber_reserve/modules/salao/services/salao_service.dart';
 import 'package:barber_reserve/modules/servico/screens/services_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-
-
 class HomeSalonsScreen extends StatefulWidget {
   const HomeSalonsScreen({super.key});
 
@@ -84,14 +80,7 @@ class _HomeSalonsScreenState extends State<HomeSalonsScreen> {
 
                     const SizedBox(height: 20),
 
-                    // BARRAS DE BUSCA
-                    Row(
-                      children: [
-                        Expanded(child: _searchInput("Buscar pelo nome salão", Icons.search)),
-                        const SizedBox(width: 10),
-                        Expanded(child: _searchInput("Buscar pelo local", Icons.location_on)),
-                      ],
-                    ),
+                    
 
                     const SizedBox(height: 20),
 

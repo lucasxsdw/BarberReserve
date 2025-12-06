@@ -13,7 +13,7 @@ class ClienteService {
     );
 
     if (response["statusCode"] == 200) {
-      // a API devolve o Cliente, com um "usuario" dentro
+       
       final usuarioJson = response["body"]["usuario"];
       return UserModel.fromJson(usuarioJson);
     }

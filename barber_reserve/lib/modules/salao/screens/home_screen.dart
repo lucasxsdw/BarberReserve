@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:barber_reserve/modules/salao/screens/salon_list.dart';
-import '../../servico/screens/services_screen.dart';
 import '../../usuario/screens/profile_screen.dart';
 
 class TelaInicial extends StatefulWidget {
@@ -15,7 +14,7 @@ class _TelaInicialState extends State<TelaInicial> {
 
   final pages = [
     const AgendaTab(),
-    const HomeSalonsScreen(), // <<--- aqui
+    const HomeSalonsScreen(),
     const PerfilScreen(),
   ];
 
@@ -78,17 +77,7 @@ class AgendaTab extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-            SizedBox(
-              height: 56,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _dateChip('quarta', '24', selected: true),
-                  _dateChip('quinta', '25'),
-                  _dateChip('sexta', '26'),
-                ],
-              ),
-            ),
+
 
             const SizedBox(height: 12),
             Container(
@@ -101,7 +90,6 @@ class AgendaTab extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Text('24 de setembro', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 24),
                   Column(
                     children: [

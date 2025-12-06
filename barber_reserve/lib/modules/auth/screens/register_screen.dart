@@ -98,18 +98,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-  // Snackbar helper
-  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ 
   void _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(msg)),
     );
   }
 
-  // ========================================================
-  // UI
-  // ========================================================
+ 
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -343,9 +339,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // ========================================================
-  // Widgets auxiliares
-  // ========================================================
+ 
   Widget _label(String text) => Align(
         alignment: Alignment.centerLeft,
         child: Text(

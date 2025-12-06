@@ -452,7 +452,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     horaFim: horaFim,
   );
 
-  // ✅ Depuração: print JSON que será enviado
+  
   print("=== Dados do agendamento ===");
   print("Serviço: ${ag.servico.titulo}");
   print("Profissional: ${ag.profissional.nome}");
