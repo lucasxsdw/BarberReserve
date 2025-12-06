@@ -80,14 +80,7 @@ class _HomeSalonsScreenState extends State<HomeSalonsScreen> {
 
                     const SizedBox(height: 20),
 
-                    // BARRAS DE BUSCA
-                    Row(
-                      children: [
-                        Expanded(child: _searchInput("Buscar pelo nome salão", Icons.search)),
-                        const SizedBox(width: 10),
-                        Expanded(child: _searchInput("Buscar pelo local", Icons.location_on)),
-                      ],
-                    ),
+                    
 
                     const SizedBox(height: 20),
 
