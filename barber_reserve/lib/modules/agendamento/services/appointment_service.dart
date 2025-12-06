@@ -22,6 +22,8 @@ class AppointmentService {
   // CREATE
   static Future<bool> enviarAgendamento(Appointment ag) async {
     final headers = await AuthService.authHeaders();
+     // ✅ Print para depuração
+    print("JSON enviado para API: ${jsonEncode(ag.toJson())}");
 
     final response = await http.post(
       Uri.parse(_baseUrl),

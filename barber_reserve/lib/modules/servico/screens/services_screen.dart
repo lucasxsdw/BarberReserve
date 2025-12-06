@@ -406,34 +406,70 @@ class _ServicesScreenState extends State<ServicesScreen> {
   }
 
   Future<void> confirmarAgendamento() async {
-    if (servicoSelecionado == null ||
-        profissionalSelecionado == null ||
-        dataSelecionada == null ||
-        horarioSelecionado == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preencha todos os dados antes de confirmar'),
-        ),
-      );
-      return;
-    }
-
-    String horaFim = calculeEndTime(horarioSelecionado, servicoSelecionado?.duracaoMinutos);
-
-    final ag = Appointment(
-      servico: servicoSelecionado!,
-      profissional: profissionalSelecionado!,
-      data: dataSelecionada!,
-      horaInicio: horarioSelecionado!,
-      horaFim: horaFim,
+  // Garantir que o serviço foi selecionado
+  if (servicoSelecionado == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Selecione um serviço antes de confirmar'),
+      ),
     );
+    return;
+  }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+  // Garantir que há profissionais disponíveis
+  profissionalSelecionado ??= servicoSelecionado!.profissionais.isNotEmpty
+      ? servicoSelecionado!.profissionais.first
+      : null;
+
+  if (profissionalSelecionado == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Nenhum profissional disponível para este serviço'),
+      ),
     );
+    return;
+  }
 
+  // Garantir que a data e horário foram selecionados
+  if (dataSelecionada == null || horarioSelecionado == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Escolha uma data e horário antes de confirmar'),
+      ),
+    );
+    return;
+  }
+
+  // Calcular hora de término
+  String horaFim = calculeEndTime(horarioSelecionado, servicoSelecionado?.duracaoMinutos);
+
+  // Criar objeto Appointment
+  final ag = Appointment(
+    servico: servicoSelecionado!,
+    profissional: profissionalSelecionado!,
+    data: dataSelecionada!,
+    horaInicio: horarioSelecionado!,
+    horaFim: horaFim,
+  );
+
+  // ✅ Depuração: print JSON que será enviado
+  print("=== Dados do agendamento ===");
+  print("Serviço: ${ag.servico.titulo}");
+  print("Profissional: ${ag.profissional.nome}");
+  print("Data: ${ag.data}");
+  print("Hora Início: ${ag.horaInicio}");
+  print("Hora Fim: ${ag.horaFim}");
+  print("JSON: ${ag.toJson()}");
+  print("============================");
+
+  // Mostrar loading
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+
+  try {
     final success = await AppointmentService.enviarAgendamento(ag);
 
     if (mounted) Navigator.pop(context);
@@ -456,7 +492,13 @@ class _ServicesScreenState extends State<ServicesScreen> {
         horarioSelecionado = null;
       });
     }
+  } catch (e) {
+    if (mounted) Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Erro ao enviar agendamento: $e')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
