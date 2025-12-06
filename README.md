@@ -6,6 +6,20 @@ Para facilitar a visualização do funcionamento completo do sistema, disponibil
 
 ---
 
+# 🗂️ Branches Utilizadas no Desenvolvimento
+
+Durante o desenvolvimento deste projeto, utilizamos as seguintes branches principais:
+
+## 📌 BarberReserve (Flutter / Client)
+
+restructure — Branch principal onde foi realizada toda a reestruturação e implementação do app.
+
+## 📌 BarberReserve-api (Django / Backend)
+
+main — Branch principal contendo toda a API em Django já organizada e funcional.
+
+---
+
 # 📘 **README — Barber Reserve (Flutter + Django API)**
 
 ## 🧾 **Descrição do Projeto**
